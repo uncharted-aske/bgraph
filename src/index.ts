@@ -18,14 +18,14 @@ export interface IBGraph extends IPipe, IAlias, ITransform, IUtils {
   query: (graph: IGraph) => IQuery,
 }
 
-export const bgraph: Partial<IBGraph> = {};
+const _bgraph: Partial<IBGraph> = {};
 
 // Initialize graph prototype
-bgraph.G = graph.prototype(bgraph as IBGraph);
+_bgraph.G = graph.prototype(_bgraph as IBGraph);
 
 // Graph factory
-bgraph.graph = function(V?: Partial<IVertex>[], E?: IEdge[]): IGraph {
-  const graph: IGraph = Object.create( bgraph.G );
+_bgraph.graph = function(V?: Partial<IVertex>[], E?: IEdge[]): IGraph {
+  const graph: IGraph = Object.create( _bgraph.G );
   // Set graph properties
   graph.edges = [];
   graph.vertices = [];
@@ -38,11 +38,11 @@ bgraph.graph = function(V?: Partial<IVertex>[], E?: IEdge[]): IGraph {
 }
 
 // Initialize query prototype
-bgraph.Q = query.prototype(bgraph as IBGraph);
+_bgraph.Q = query.prototype(_bgraph as IBGraph);
 
 // Query factory, called by graph's query initializer
-bgraph.query = function(graph: IGraph): IQuery {
-  const query: IQuery = Object.create( bgraph.Q );
+_bgraph.query = function(graph: IGraph): IQuery {
+  const query: IQuery = Object.create( _bgraph.Q );
   // Set query properties
   query.graph = graph;
   query.state = [];
@@ -52,15 +52,17 @@ bgraph.query = function(graph: IGraph): IQuery {
 }
 
 // Initialize transformers and extend bgraph with transform methods
-bgraph.T = [];
-transform.hydrate(bgraph as IBGraph);
+_bgraph.T = [];
+transform.hydrate(_bgraph as IBGraph);
 
 // Initialize pipes and extend bgraph with pipe methods
-bgraph.Pipetypes = new Map();
-pipetypes.hydrate(bgraph as IBGraph);
+_bgraph.Pipetypes = new Map();
+pipetypes.hydrate(_bgraph as IBGraph);
 
 // Extend bgraph with alias methods
-alias.hydrate(bgraph as IBGraph);
+alias.hydrate(_bgraph as IBGraph);
 
 // Extend bgraph with utility methods
-utils.hydrate(bgraph as IBGraph);
+utils.hydrate(_bgraph as IBGraph);
+
+export const bgraph = _bgraph as IBGraph;
