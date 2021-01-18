@@ -1,6 +1,6 @@
 import Tweakpane from 'tweakpane';
 import { COLORS, deepCopy } from './helpers';
-import { IGraph } from '../../../../src/graph/graph';
+import { IGraph } from '../../../src/graph/graph';
 import { addLayer } from './graph';
 
 function rgbToHex(r, g, b) {

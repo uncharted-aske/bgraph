@@ -2,7 +2,7 @@ import { html, render } from 'lit-html';
 import Tweakpane from 'tweakpane';
 import { PointLabelPlacement } from '@uncharted-aske/grafer/build/dist/mod.js';
 import {LayoutInfo, parseJSONL, COLORS} from './helpers';
-import { IGraph } from '../../../../src/graph/graph';
+import { IGraph } from '../../../src/graph/graph';
 
 function createFileInput(cb: () => void): HTMLInputElement {
   const input = document.createElement('input');
