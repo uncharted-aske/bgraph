@@ -4,7 +4,7 @@ import * as transform from "./transformers/transform";
 import * as pipetypes from "./pipes/pipetypes";
 import * as alias from "./alias/alias";
 import * as utils from "./utils/utils";
-import { IGraph, IGraphProtoType, IVertex, IEdge } from "./graph/graph";
+import { IGraph, IGraphProtoType, IVertexProto, IEdgeProto } from "./graph/graph";
 import { IQuery, IQueryPrototype } from "./query/query";
 import { IPipe } from "./pipes/pipetypes";
 import { IAlias } from "./alias/alias";
@@ -14,7 +14,7 @@ import { IUtils } from "./utils/utils";
 export interface IBGraph extends IPipe, IAlias, ITransform, IUtils {
   G: IGraphProtoType,
   Q: IQueryPrototype,
-  graph: (V?: Partial<IVertex>[], E?: IEdge[]) => IGraph,
+  graph: (V?: IVertexProto[], E?: IEdgeProto[]) => IGraph,
   query: (graph: IGraph) => IQuery,
 }
 
@@ -24,7 +24,7 @@ const _bgraph: Partial<IBGraph> = {};
 _bgraph.G = graph.prototype(_bgraph as IBGraph);
 
 // Graph factory
-_bgraph.graph = function(V?: Partial<IVertex>[], E?: IEdge[]): IGraph {
+_bgraph.graph = function(V?: IVertexProto[], E?: IEdgeProto[]): IGraph {
   const graph: IGraph = Object.create( _bgraph.G );
   // Set graph properties
   graph.edges = [];

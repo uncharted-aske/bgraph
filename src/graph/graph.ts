@@ -1,25 +1,34 @@
 import { IBGraph } from "..";
 import { IQuery } from "../query/query";
 
-export type VertexIndex = number;
-export interface IVertex {
+export type VertexIndex = number | string;
+
+export interface IVertexProto {
   _id: VertexIndex,
+};
+
+export interface IVertex extends IVertexProto {
   _out: IEdge[],
   _in: IEdge[],
 };
 
-export interface IEdge {
+export interface IEdgeProto {
+  _out: VertexIndex,
+  _in: VertexIndex,
+  _label?: string,
+}
+
+export interface IEdge extends Omit<IEdgeProto, '_out' | '_in'> {
   _out: IVertex,
   _in: IVertex,
-  _label?: string,
 };
 
 export interface IGraphProtoType {
   v: (this: IGraph) => IQuery,
-  addVertex: (this: IGraph, partialVertex: Partial<IVertex>) => VertexIndex | false,
-  addEdge: (this: IGraph, edge: IEdge) => void | false,
-  addVertices: (this: IGraph, partialVertices: Partial<IVertex>[]) => void,
-  addEdges: (this: IGraph, edges: IEdge[]) => void,
+  addVertex: (this: IGraph, vertexProto: IVertexProto) => VertexIndex | false,
+  addEdge: (this: IGraph, edgeProto: IEdgeProto) => void | false,
+  addVertices: (this: IGraph, vertexProtos: IVertexProto[]) => void,
+  addEdges: (this: IGraph, edgeProtos: IEdgeProto[]) => void,
   removeVertex: (this: IGraph, vertex: IVertex) => void,
   removeEdge: (this: IGraph, edge: IEdge) => void,
   findVertices: (this: IGraph, args: (VertexIndex | Record<string, any>)[]) => IVertex[],
@@ -47,17 +56,18 @@ export function prototype(bgraph: IBGraph): IGraphProtoType {
     return query;
   }
 
-  G.addVertex = function(this: IGraph, partialVertex: Partial<IVertex>): VertexIndex | false {
-    if(partialVertex._id >= this.autoid) {
-      this.autoid = partialVertex._id + 1;
+  G.addVertex = function(this: IGraph, vertexProto: IVertexProto): VertexIndex | false {
+    // TODO: Use hashes to autoid
+    if(typeof(vertexProto._id) === 'number' && vertexProto._id >= this.autoid) {
+      this.autoid = vertexProto._id + 1;
     }
-    if(!partialVertex._id && partialVertex._id != 0) {
-      partialVertex._id = this.autoid++;
-    } else if(this.findVertexById(partialVertex._id)) {
-      return bgraph.error('A vertex with id ' + partialVertex._id + ' already exists');
+    if(!vertexProto._id && vertexProto._id != 0) {
+      vertexProto._id = this.autoid++;
+    } else if(this.findVertexById(vertexProto._id)) {
+      return bgraph.error('A vertex with id ' + vertexProto._id + ' already exists');
     }
 
-    const vertex = partialVertex as IVertex;
+    const vertex = vertexProto as IVertex;
     this.vertices.push(vertex);
     this.vertexIndex.set(vertex._id, vertex);
     // Create empty edge arrays these will be populated when adding edges
@@ -66,24 +76,24 @@ export function prototype(bgraph: IBGraph): IGraphProtoType {
     return vertex._id;
   }
 
-  G.addEdge = function(this: IGraph, edge: IEdge): false | void {
-    // TODO: Remove typescript ignores and fix type error
-    //@ts-ignore
-    edge._in  = this.findVertexById(edge._in);
-    //@ts-ignore
-    edge._out = this.findVertexById(edge._out);
+  G.addEdge = function(this: IGraph, edgeProto: IEdgeProto): false | void {
+    const edge: Partial<IEdge> = edgeProto as unknown as Partial<IEdge>;
+
+    edge._in  = this.findVertexById(edgeProto._in);
+    edge._out = this.findVertexById(edgeProto._out);
+    edge._label = edgeProto._label;
 
     if(!(edge._in && edge._out)) {
       return bgraph.error("That edge's " + (edge._in ? 'out' : 'in') + " vertex wasn't found");
     }
 
-    edge._out._out.push(edge); // Populate source vertex's outward edges with new edge
-    edge._in._in.push(edge); // Populate source vertex's outward edges with new edge
-    this.edges.push(edge);
+    edge._out._out.push(edge as IEdge); // Populate source vertex's outward edges with new edge
+    edge._in._in.push(edge as IEdge); // Populate source vertex's outward edges with new edge
+    this.edges.push(edge as IEdge);
   }
 
-  G.addVertices = function(this: IGraph, partialVertices: Partial<IVertex>[]): void { partialVertices.forEach(this.addVertex.bind(this)) }
-  G.addEdges = function(this: IGraph, edges: IEdge[]): void { edges.forEach(this.addEdge.bind(this)) }
+  G.addVertices = function(this: IGraph, vertexProtos: IVertexProto[]): void { vertexProtos.forEach(this.addVertex.bind(this)) }
+  G.addEdges = function(this: IGraph, edgeProtos: IEdgeProto[]): void { edgeProtos.forEach(this.addEdge.bind(this)) }
 
   G.removeVertex = function(this: IGraph, vertex: IVertex): void {
     vertex._in.slice().forEach(G.removeEdge.bind(this));
