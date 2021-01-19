@@ -1,6 +1,6 @@
 import { bgraph } from '../../../../src';
 import { renderGraph } from '../../core/graph';
-import { renderSearchPane, onSearch } from '../../core/search';
+import { renderSearchPane, onSearchBuilder } from '../../core/search';
 import { PointLabelPlacement } from '@uncharted-aske/grafer/build/dist/mod.js';
 import { renderLayout } from '../../core/layout';
 
@@ -74,11 +74,10 @@ export async function grid(container: HTMLElement): Promise<void> {
 
   renderGraph(graphContainer, nodesLayer, layers);
   renderSearchPane(
-    G,
     searchPaneContainer,
-    graphContainer,
-    nodesLayer,
-    layers,
-    onSearch,
+    onSearchBuilder(G, graphContainer, nodesLayer, layers, 'Straight', {
+      alpha: 0.50,
+      nearDepth: 0.9,
+    }),
   );
 }

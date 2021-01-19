@@ -29,13 +29,9 @@ export function addLayer(edges, label, container, points, layers, color, type, o
   const queryLayer = {
     name: label,
     edges: {
-      // type: 'CurvedPath', // TODO: Remove hard code options
+      type,
       data: [],
-      options: {
-        // alpha: 0.25,
-        alpha: 1.00,
-        nearDepth: 0.9,
-      },
+      options,
     },
   };
 

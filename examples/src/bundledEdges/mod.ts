@@ -1,6 +1,6 @@
 import { bgraph } from "../../../src";
 import { renderMenu, loadGraph } from "../core/loader";
-import { renderSearchPane, onSearch } from "../core/search";
+import { renderSearchPane, onSearchBuilder } from "../core/search";
 import { renderGraph } from "../core/graph";
 import { renderLayout } from "../core/layout";
 
@@ -14,12 +14,11 @@ export async function bundledEdges(container: HTMLElement): Promise<void> {
 
     const searchPaneContainer = document.getElementById('search-pane-container');
     renderSearchPane(
-      G,
       searchPaneContainer,
-      graphContainer,
-      points,
-      layers,
-      onSearch,
+      onSearchBuilder(G, graphContainer, points, layers, 'CurvedPath', {
+        alpha: 0.25,
+        nearDepth: 0.9,
+      }),
     );
   });
 }
