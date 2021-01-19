@@ -25,14 +25,15 @@ export function renderGraph(container, points, layers) {
   return controller;
 }
 
-export function addLayer(edges, label, container, points, layers, color) {
+export function addLayer(edges, label, container, points, layers, color, type, options) {
   const queryLayer = {
     name: label,
     edges: {
-      type: 'CurvedPath', // TODO: Remove hard code options
+      // type: 'CurvedPath', // TODO: Remove hard code options
       data: [],
       options: {
-        alpha: 0.25,
+        // alpha: 0.25,
+        alpha: 1.00,
         nearDepth: 0.9,
       },
     },

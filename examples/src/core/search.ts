@@ -40,7 +40,7 @@ export function renderSearchPane(G: IGraph, searchContainer: HTMLElement, graphC
   });
 }
 
-function transformVertexToEdgeResults(vertices) {
+export function transformVertexToEdgeResults(vertices) {
   // Result prints out a list of vertices that satisfy our query,
   // however to highlight graph edges we also want a list of edges
   // TODO: This should be an output transform in the search engine
@@ -65,7 +65,12 @@ export function onSearch(
   G: IGraph, // G namespace injected for use in query evaluation
   query: string,
   label: string,
-  graphContainer, points, layers, color
+  graphContainer,
+  points,
+  layers,
+  color,
+  type,
+  options,
 ) {
   const result = eval(query);
   // Result prints out a list of vertices that satisfy our query,
@@ -75,6 +80,6 @@ export function onSearch(
   console.log('Query results:');
   console.log(edges);
 
-  addLayer(edges, label, graphContainer, points, layers, color);
+  addLayer(edges, label, graphContainer, points, layers, color, type, options);
   return edges;
 }
