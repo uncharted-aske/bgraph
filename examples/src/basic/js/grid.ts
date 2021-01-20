@@ -6,22 +6,22 @@ import { renderLayout } from '../../core/layout';
 
 export async function grid(container: HTMLElement): Promise<void> {
   const edges = [
-    { _id: 'AE', id: 'AE', source: 'A', target: 'E', _out: 'A', _in: 'E', sourceColor: '#5e81ac', targetColor: '#b48ead', type: "Activation", belief: 0.95 },
-    { _id: 'AD', id: 'AD', source: 'A', target: 'D', _out: 'A', _in: 'D', sourceColor: '#5e81ac', targetColor: '#b48ead', type: "Activation", belief: 0.95 },
-    { _id: 'BA', id: 'BA', source: 'B', target: 'A', _out: 'B', _in: 'A', sourceColor: '#5e81ac', targetColor: '#b48ead', type: "Activation", belief: 0.95 },
-    { _id: 'BE', id: 'BE', source: 'B', target: 'E', _out: 'B', _in: 'E', sourceColor: '#5e81ac', targetColor: '#b48ead', type: "Activation", belief: 0.95 },
-    { _id: 'CB', id: 'CB', source: 'C', target: 'B', _out: 'C', _in: 'B', sourceColor: '#5e81ac', targetColor: '#b48ead', type: "Activation", belief: 0.95 },
-    { _id: 'CE', id: 'CE', source: 'C', target: 'E', _out: 'C', _in: 'E', sourceColor: '#5e81ac', targetColor: '#b48ead', type: "Activation", belief: 0.95 },
-    { _id: 'DE', id: 'DE', source: 'D', target: 'E', _out: 'D', _in: 'E', sourceColor: '#5e81ac', targetColor: '#b48ead', type: "Activation", belief: 0.95 },
-    { _id: 'DG', id: 'DG', source: 'D', target: 'G', _out: 'D', _in: 'G', sourceColor: '#5e81ac', targetColor: '#b48ead', type: "Activation", belief: 0.95 },
-    { _id: 'EF', id: 'EF', source: 'E', target: 'F', _out: 'E', _in: 'F', sourceColor: '#5e81ac', targetColor: '#b48ead', type: "Activation", belief: 0.95 },
-    { _id: 'EG', id: 'EG', source: 'E', target: 'G', _out: 'E', _in: 'G', sourceColor: '#5e81ac', targetColor: '#b48ead', type: "Activation", belief: 0.95 },
-    { _id: 'EH', id: 'EH', source: 'E', target: 'H', _out: 'E', _in: 'H', sourceColor: '#5e81ac', targetColor: '#b48ead', type: "Activation", belief: 0.95 },
-    { _id: 'EI', id: 'EI', source: 'E', target: 'I', _out: 'E', _in: 'I', sourceColor: '#5e81ac', targetColor: '#b48ead', type: "Activation", belief: 0.95 },
-    { _id: 'FC', id: 'FC', source: 'F', target: 'C', _out: 'F', _in: 'C', sourceColor: '#5e81ac', targetColor: '#b48ead', type: "Activation", belief: 0.95 },
-    { _id: 'GH', id: 'GH', source: 'G', target: 'H', _out: 'G', _in: 'H', sourceColor: '#5e81ac', targetColor: '#b48ead', type: "Activation", belief: 0.95 },
-    { _id: 'HI', id: 'HI', source: 'H', target: 'I', _out: 'H', _in: 'I', sourceColor: '#5e81ac', targetColor: '#b48ead', type: "Activation", belief: 0.95 },
-    { _id: 'IF', id: 'IF', source: 'I', target: 'F', _out: 'I', _in: 'F', sourceColor: '#5e81ac', targetColor: '#b48ead', type: "Activation", belief: 0.95 },
+    { _id: 'AE', id: 'AE', source: 'A', target: 'E', _out: 'A', _in: 'E', sourceColor: '#5e81ac', targetColor: '#b48ead', colors: "GR", x: 10,  y: -10 },
+    { _id: 'AD', id: 'AD', source: 'A', target: 'D', _out: 'A', _in: 'D', sourceColor: '#5e81ac', targetColor: '#b48ead', colors: "GR", x: 0,   y: -10 },
+    { _id: 'BA', id: 'BA', source: 'B', target: 'A', _out: 'B', _in: 'A', sourceColor: '#5e81ac', targetColor: '#b48ead', colors: "RR", x: -10, y: 0   },
+    { _id: 'BE', id: 'BE', source: 'B', target: 'E', _out: 'B', _in: 'E', sourceColor: '#5e81ac', targetColor: '#b48ead', colors: "GR", x: 0,   y: -10 },
+    { _id: 'CB', id: 'CB', source: 'C', target: 'B', _out: 'C', _in: 'B', sourceColor: '#5e81ac', targetColor: '#b48ead', colors: "GG", x: -10, y: 0   },
+    { _id: 'CE', id: 'CE', source: 'C', target: 'E', _out: 'C', _in: 'E', sourceColor: '#5e81ac', targetColor: '#b48ead', colors: "GR", x: -10, y: -10 },
+    { _id: 'DE', id: 'DE', source: 'D', target: 'E', _out: 'D', _in: 'E', sourceColor: '#5e81ac', targetColor: '#b48ead', colors: "RR", x: 10,  y: 0   },
+    { _id: 'DG', id: 'DG', source: 'D', target: 'G', _out: 'D', _in: 'G', sourceColor: '#5e81ac', targetColor: '#b48ead', colors: "RB", x: 0,   y: -10 },
+    { _id: 'EF', id: 'EF', source: 'E', target: 'F', _out: 'E', _in: 'F', sourceColor: '#5e81ac', targetColor: '#b48ead', colors: "RR", x: 10,  y: 0   },
+    { _id: 'EG', id: 'EG', source: 'E', target: 'G', _out: 'E', _in: 'G', sourceColor: '#5e81ac', targetColor: '#b48ead', colors: "RB", x: -10, y: -10 },
+    { _id: 'EH', id: 'EH', source: 'E', target: 'H', _out: 'E', _in: 'H', sourceColor: '#5e81ac', targetColor: '#b48ead', colors: "RB", x: 0,   y: -10 },
+    { _id: 'EI', id: 'EI', source: 'E', target: 'I', _out: 'E', _in: 'I', sourceColor: '#5e81ac', targetColor: '#b48ead', colors: "RB", x: 10,  y: -10 },
+    { _id: 'FC', id: 'FC', source: 'F', target: 'C', _out: 'F', _in: 'C', sourceColor: '#5e81ac', targetColor: '#b48ead', colors: "RG", x: 0,   y: 10  },
+    { _id: 'GH', id: 'GH', source: 'G', target: 'H', _out: 'G', _in: 'H', sourceColor: '#5e81ac', targetColor: '#b48ead', colors: "BB", x: 10,  y: 0   },
+    { _id: 'HI', id: 'HI', source: 'H', target: 'I', _out: 'H', _in: 'I', sourceColor: '#5e81ac', targetColor: '#b48ead', colors: "BB", x: 10,  y: 0   },
+    { _id: 'IF', id: 'IF', source: 'I', target: 'F', _out: 'I', _in: 'F', sourceColor: '#5e81ac', targetColor: '#b48ead', colors: "BR", x: 0,   y: 10  },
   ];
 
   const nodes = [
