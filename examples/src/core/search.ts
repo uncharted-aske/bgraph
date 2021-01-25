@@ -1,6 +1,6 @@
 import Tweakpane from 'tweakpane';
 import { COLORS, deepCopy } from './helpers';
-import { IGraph } from '../../../../src/graph/graph';
+import { IGraph } from '../../../src/graph/graph';
 import { addLayer } from './graph';
 
 function rgbToHex(r, g, b) {
@@ -8,7 +8,7 @@ function rgbToHex(r, g, b) {
   return hex.slice(0, 7);
 }
 
-export function renderSearchPane(G: IGraph, searchContainer: HTMLElement, graphContainer: HTMLElement, points, layers, onSearch) {
+export function renderSearchPane(searchContainer: HTMLElement, onSearch) {
   let selectedColor: string = COLORS.PALE_GOLD;
   let label = 'Query Label';
 
@@ -32,7 +32,7 @@ export function renderSearchPane(G: IGraph, searchContainer: HTMLElement, graphC
       selectedColor = rgbToHex(value['r'], value['g'], value['b']);
     } else if (typeof value === 'string' && value.length > 1 && value[0] === 'G' && value[1] === '.') {
       // Query change
-      onSearch(G, value, label, graphContainer, points, layers, selectedColor);
+      onSearch(value, label, selectedColor);
     } else if (typeof value === 'string') {
       // Label change
       label = value;
@@ -40,7 +40,7 @@ export function renderSearchPane(G: IGraph, searchContainer: HTMLElement, graphC
   });
 }
 
-function transformVertexToEdgeResults(vertices) {
+export function transformVertexToEdgeResults(vertices) {
   // Result prints out a list of vertices that satisfy our query,
   // however to highlight graph edges we also want a list of edges
   // TODO: This should be an output transform in the search engine
@@ -61,20 +61,24 @@ function transformVertexToEdgeResults(vertices) {
   return edges;
 }
 
-export function onSearch(
+export function onSearchBuilder(
   G: IGraph, // G namespace injected for use in query evaluation
-  query: string,
-  label: string,
-  graphContainer, points, layers, color
+  graphContainer,
+  points,
+  layers,
+  type,
+  options,
 ) {
-  const result = eval(query);
-  // Result prints out a list of vertices that satisfy our query,
-  // however to highlight graph edges we also want a list of edges
-  let edges = transformVertexToEdgeResults(result);
-  edges = deepCopy(edges, ['_in', '_out']);
-  console.log('Query results:');
-  console.log(edges);
+  return function(query: string, label: string, color) {
+    const result = eval(query);
+    // Result prints out a list of vertices that satisfy our query,
+    // however to highlight graph edges we also want a list of edges
+    let edges = transformVertexToEdgeResults(result);
+    edges = deepCopy(edges, ['_in', '_out']);
+    console.log('Query results:');
+    console.log(edges);
 
-  addLayer(edges, label, graphContainer, points, layers, color);
-  return edges;
+    addLayer(edges, label, graphContainer, points, layers, color, type, options);
+    return edges;
+  };
 }

@@ -1,4 +1,4 @@
-import { GraferController, DebugMenu } from '@uncharted-aske/grafer/build/dist/mod.js';
+import { GraferController, UX } from '@uncharted-aske/grafer/build/dist/mod.js';
 
 
 function createGrafCanvas(container) {
@@ -14,7 +14,7 @@ function renderDebugMenuPane(viewport) {
     debugMenuPane.remove();
   }
 
-  const debugMenu = new DebugMenu(viewport);
+  const debugMenu = new UX.DebugMenu(viewport);
   return debugMenu;
 }
 
@@ -25,16 +25,13 @@ export function renderGraph(container, points, layers) {
   return controller;
 }
 
-export function addLayer(edges, label, container, points, layers, color) {
+export function addLayer(edges, label, container, points, layers, color, type, options) {
   const queryLayer = {
     name: label,
     edges: {
-      type: 'CurvedPath', // TODO: Remove hard code options
+      type,
       data: [],
-      options: {
-        alpha: 0.25,
-        nearDepth: 0.9,
-      },
+      options,
     },
   };
 
