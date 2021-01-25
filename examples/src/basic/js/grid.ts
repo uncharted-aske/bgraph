@@ -1,7 +1,7 @@
 import { bgraph } from '../../../../src';
 import { renderGraph } from '../../core/graph';
 import { renderSearchPane, onSearchBuilder } from '../../core/search';
-import { PointLabelPlacement } from '@uncharted-aske/grafer/build/dist/mod.js';
+import { graph } from '@uncharted-aske/grafer/build/dist/mod.js';
 import { renderLayout } from '../../core/layout';
 
 export async function grid(container: HTMLElement): Promise<void> {
@@ -54,7 +54,7 @@ export async function grid(container: HTMLElement): Promise<void> {
     },
     options: {
       visibilityThreshold: 8,
-      labelPlacement: PointLabelPlacement.TOP,
+      labelPlacement: graph.labels.PointLabelPlacement.TOP,
     },
   };
 

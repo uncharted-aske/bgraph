@@ -1,4 +1,4 @@
-import { GraferController, DebugMenu } from '@uncharted-aske/grafer/build/dist/mod.js';
+import { GraferController, UX } from '@uncharted-aske/grafer/build/dist/mod.js';
 
 
 function createGrafCanvas(container) {
@@ -14,7 +14,7 @@ function renderDebugMenuPane(viewport) {
     debugMenuPane.remove();
   }
 
-  const debugMenu = new DebugMenu(viewport);
+  const debugMenu = new UX.DebugMenu(viewport);
   return debugMenu;
 }
 
