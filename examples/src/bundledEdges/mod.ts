@@ -10,12 +10,12 @@ export async function bundledEdges(container: HTMLElement): Promise<void> {
     const { points, layers } = await loadGraph(result, G);
     renderLayout(container);
     const graphContainer = document.getElementById('graph-container');
-    renderGraph(graphContainer, points, layers);
+    const controller = renderGraph(graphContainer, points, layers);
 
     const searchPaneContainer = document.getElementById('search-pane-container');
     renderSearchPane(
       searchPaneContainer,
-      onSearchBuilder(G, graphContainer, points, layers, 'CurvedPath', {
+      onSearchBuilder(G, controller, 'CurvedPath', {
         alpha: 0.25,
         nearDepth: 0.9,
       }),

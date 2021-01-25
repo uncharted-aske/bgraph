@@ -2,6 +2,7 @@ import Tweakpane from 'tweakpane';
 import { COLORS, deepCopy } from './helpers';
 import { IGraph } from '../../../src/graph/graph';
 import { addLayer } from './graph';
+import { GraferController } from '@uncharted-aske/grafer/build/dist/mod';
 
 function rgbToHex(r, g, b) {
   const hex = "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
@@ -63,9 +64,7 @@ export function transformVertexToEdgeResults(vertices) {
 
 export function onSearchBuilder(
   G: IGraph, // G namespace injected for use in query evaluation
-  graphContainer,
-  points,
-  layers,
+  controller: GraferController,
   type,
   options,
 ) {
@@ -78,7 +77,7 @@ export function onSearchBuilder(
     console.log('Query results:');
     console.log(edges);
 
-    addLayer(edges, label, graphContainer, points, layers, color, type, options);
+    addLayer(controller, edges, label, color, type, options);
     return edges;
   };
 }

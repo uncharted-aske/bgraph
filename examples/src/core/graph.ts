@@ -25,7 +25,7 @@ export function renderGraph(container, points, layers) {
   return controller;
 }
 
-export function addLayer(edges, label, container, points, layers, color, type, options) {
+export function addLayer(controller: GraferController, edges, label, color, type, options) {
   const queryLayer = {
     name: label,
     edges: {
@@ -41,7 +41,9 @@ export function addLayer(edges, label, container, points, layers, color, type, o
     edge.targetColor = color;
     return edge;
   });
-  layers.push(queryLayer);
 
-  renderGraph(container, points, layers);
+  // Add query layer to graph and debug menu
+  controller.addLayer(queryLayer, label, undefined);
+  controller.render();
+  renderDebugMenuPane(controller.viewport);
 }
