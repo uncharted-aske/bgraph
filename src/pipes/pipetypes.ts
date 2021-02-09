@@ -83,8 +83,15 @@ export function hydrate(bgraph: IBGraph) {
         // Initialize state
         state.gremlin = gremlin;
         // Get matching edges
-        state.edges = graph[find_method](gremlin.vertex)
-                        .filter(bgraph.filterEdges(args[0]));
+        if (typeof args[0] === 'function') {
+          // User supplied edge filtering function
+          state.edges = graph[find_method](gremlin.vertex)
+                          .filter(args[0]);
+        } else {
+          // Wrap users string, list of strings in a filtering function
+          state.edges = graph[find_method](gremlin.vertex)
+                          .filter(bgraph.filterEdges(args[0]));
+        }
       }
 
       if(!state.edges.length) {

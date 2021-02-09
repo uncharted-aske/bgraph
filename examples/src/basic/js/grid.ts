@@ -72,10 +72,10 @@ export async function grid(container: HTMLElement): Promise<void> {
   const graphContainer = document.getElementById('graph-container');
   const searchPaneContainer = document.getElementById('search-pane-container');
 
-  renderGraph(graphContainer, nodesLayer, layers);
+  const controller = renderGraph(graphContainer, nodesLayer, layers);
   renderSearchPane(
     searchPaneContainer,
-    onSearchBuilder(G, graphContainer, nodesLayer, layers, 'Straight', {
+    onSearchBuilder(G, controller, 'Straight', {
       alpha: 0.50,
       nearDepth: 0.9,
     }),
