@@ -41,27 +41,6 @@ export function renderSearchPane(searchContainer: HTMLElement, onSearch) {
   });
 }
 
-export function transformVertexToEdgeResults(vertices) {
-  // Result prints out a list of vertices that satisfy our query,
-  // however to highlight graph edges we also want a list of edges
-  // TODO: This should be an output transform in the search engine
-  const edgeMap = new Map();
-  vertices.forEach(vertex => {
-    vertex._in.forEach(edge => {
-      if (!edgeMap.has(edge._id)) {
-        edgeMap.set(edge._id, edge);
-      }
-    });
-    vertex._out.forEach(edge => {
-      if (!edgeMap.has(edge._id)) {
-        edgeMap.set(edge._id, edge);
-      }
-    });
-  });
-  const edges = Array.from(edgeMap.values());
-  return edges;
-}
-
 export function onSearchBuilder(
   G: IGraph, // G namespace injected for use in query evaluation
   controller: GraferController,
@@ -70,14 +49,13 @@ export function onSearchBuilder(
 ) {
   return function(query: string, label: string, color) {
     const result = eval(query);
-    // Result prints out a list of vertices that satisfy our query,
-    // however to highlight graph edges we also want a list of edges
-    let edges = transformVertexToEdgeResults(result);
-    edges = deepCopy(edges, ['_in', '_out']);
-    console.log('Query results:');
-    console.log(edges);
+    const bnodes = deepCopy(result, ['_in', '_out']);
 
-    addLayer(controller, edges, label, color, type, options);
-    return edges;
+    // Result prints out a list of vertices that satisfy our query,
+    console.log('Query results: ');
+    console.log(bnodes);
+
+    addLayer(controller, bnodes, label, color, type, options);
+    return bnodes;
   };
 }

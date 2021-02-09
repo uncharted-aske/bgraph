@@ -1,7 +1,7 @@
 import { html, render } from 'lit-html';
 import Tweakpane from 'tweakpane';
 import { graph } from '@uncharted-aske/grafer/build/dist/mod.js';
-import {LayoutInfo, parseJSONL, COLORS} from './helpers';
+import {LayoutInfo, parseJSONL, COLORS} from '../core/helpers';
 import { IGraph } from '../../../src/graph/graph';
 
 function createFileInput(cb: () => void): HTMLInputElement {
@@ -27,6 +27,10 @@ export function renderMenu(container: HTMLElement, cb: (result: LayoutInfo) => v
     nodesFile: null,
     nodeEdges: 'No file selected.',
     nodeEdgesFile: null,
+    bnodes: 'No file selected.',
+    bnodesFile: null,
+    bnodeEdges: 'No file selected.',
+    bnodeEdgesFile: null,
   };
 
   const menu = new Tweakpane({
@@ -105,6 +109,31 @@ export function renderMenu(container: HTMLElement, cb: (result: LayoutInfo) => v
   });
   menu.addMonitor(result, 'nodeEdges');
   menu.addButton({ title: 'browse...' }).on('click', () => nodeEdgesInput.click());
+
+  menu.addSeparator();
+  const bnodesInput = createFileInput(() => {
+    if (bnodesInput.files.length) {
+      result.bnodesFile = bnodesInput.files[0];
+      result.bnodes = result.bnodesFile.name;
+    } else {
+      result.bnodes = 'No file selected.';
+      result.bnodesFile = null;
+    }
+  });
+  menu.addMonitor(result, 'bnodes');
+  menu.addButton({ title: 'browse...' }).on('click', () => bnodesInput.click());
+
+  const bnodeEdgesInput = createFileInput(() => {
+    if (bnodeEdgesInput.files.length) {
+      result.bnodeEdgesFile = bnodeEdgesInput.files[0];
+      result.bnodeEdges = result.bnodeEdgesFile.name;
+    } else {
+      result.bnodeEdges = 'No file selected.';
+      result.bnodeEdgesFile = null;
+    }
+  });
+  menu.addMonitor(result, 'bnodeEdges');
+  menu.addButton({ title: 'browse...' }).on('click', () => bnodeEdgesInput.click());
 
   const loadBtn = menu.addButton({ title: 'load' });
   loadBtn.on('click', () => {
@@ -250,7 +279,6 @@ export async function loadGraph(info: LayoutInfo, G: IGraph): Promise<any> {
       nodeLayer.labels.data = nodes.data;
     }
 
-
     if (info.nodeEdgesFile) {
       const edges = nodeLayer.edges;
       await parseJSONL(info.nodeEdgesFile, json => {
@@ -261,8 +289,22 @@ export async function loadGraph(info: LayoutInfo, G: IGraph): Promise<any> {
       });
     }
 
-    points.data.forEach(G.addVertex.bind(G))
-    edges.data.forEach(G.addEdge.bind(G));
+    const bnodes = [];
+    if (info.bnodesFile) {
+      await parseJSONL(info.bnodesFile, json => {
+        bnodes.push(json);
+      });
+    }
+
+    const bedges = [];
+    if (info.bnodeEdgesFile) {
+      await parseJSONL(info.bnodeEdgesFile, json => {
+        bedges.push(json);
+      });
+    }
+
+    bnodes.forEach(G.addVertex.bind(G))
+    bedges.forEach(G.addEdge.bind(G));
 
     return { points, layers };
   }

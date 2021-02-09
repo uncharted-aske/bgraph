@@ -7,7 +7,7 @@ function createGrafCanvas(container) {
   return canvas;
 }
 
-function renderDebugMenuPane(viewport) {
+export function renderDebugMenuPane(viewport) {
   // Search and remove existing debug menu panel
   const debugMenuPane = document.querySelector('.tp-dfwv');
   if (debugMenuPane) {
@@ -25,9 +25,13 @@ export function renderGraph(container, points, layers) {
   return controller;
 }
 
-export function addLayer(controller: GraferController, edges, label, color, type, options) {
+export function addLayer(controller: GraferController, queryResults, label, color, type, options) {
   const queryLayer = {
     name: label,
+    nodes: {
+      type: 'Circle',
+      data: [],
+    },
     edges: {
       type,
       data: [],
@@ -35,12 +39,19 @@ export function addLayer(controller: GraferController, edges, label, color, type
     },
   };
 
-  // Set edge color on query results
-  queryLayer.edges.data = edges.map(edge => {
-    edge.sourceColor = color;
-    edge.targetColor = color;
-    return edge;
-  });
+  for (let i = 0; i < queryResults.length; i++) {
+    const result = queryResults[i];
+    if (result._type === 'node') {
+      // Set node color on query result
+      result.color = color;
+      queryLayer.nodes.data.push(result);
+    } else if (result._type === 'edge') {
+      // Set edge color on query result
+      result.sourceColor = color;
+      result.targetColor = color;
+      queryLayer.edges.data.push(result);
+    }
+  }
 
   // Add query layer to graph and debug menu
   controller.addLayer(queryLayer, label, undefined);
