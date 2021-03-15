@@ -1,7 +1,7 @@
 import Tweakpane from 'tweakpane';
 import { COLORS, deepCopy } from './helpers';
 import { IGraph } from '../../../src/graph/graph';
-import { addLayer } from './graph';
+import { addLayer, renderDebugMenuPane } from './graph';
 import { GraferController } from '@uncharted-aske/grafer/build/dist/mod';
 
 function rgbToHex(r, g, b) {
@@ -9,7 +9,7 @@ function rgbToHex(r, g, b) {
   return hex.slice(0, 7);
 }
 
-export function renderSearchPane(searchContainer: HTMLElement, onSearch) {
+export function renderSearchPane(searchContainer: HTMLElement, onSearch, controller: GraferController) {
   let selectedColor: string = COLORS.PALE_GOLD;
   let label = 'Query Label';
 
@@ -26,6 +26,16 @@ export function renderSearchPane(searchContainer: HTMLElement, onSearch) {
   pane.addInput(paneParams, 'label');
   pane.addInput(paneParams, 'search');
   pane.addInput(paneParams, 'color');
+
+  // Add remove layer button
+  const removeLayerButton = pane.addButton({title: 'Remove Layer'});
+  removeLayerButton.on('click', () => {
+    if (controller.viewport.graph.layers.length > 2) {
+      // Only remove query layers
+      controller.removeLayerByIndex(0);
+      renderDebugMenuPane(controller.viewport);
+    }
+  });
 
   pane.on('change', value => {
     if (typeof value === 'object' && value !== null && value['r'] && value['g'] && value['b']) {

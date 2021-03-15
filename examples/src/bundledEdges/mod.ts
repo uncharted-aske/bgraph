@@ -60,20 +60,23 @@ export function onSearchBuilder(
     }
 
     // Add query layers to grafer controller
-    console.log('Query results: ');
+    console.log(`Query results: ${queryResults.length}`);
     if (nodeQueryLayer.nodes.data.length > 0) {
       console.log('Node Query:');
       console.log(nodeQueryLayer);
+      // console.log(JSON.stringify(nodeQueryLayer));
       controller.addLayer(nodeQueryLayer, `Node: ${label}`, undefined);
     }
     if (intraEdgeQueryLayer.edges.data.length > 0) {
       console.log('Intra Edge Query:');
       console.log(intraEdgeQueryLayer);
+      // console.log(JSON.stringify(intraEdgeQueryLayer));
       controller.addLayer(intraEdgeQueryLayer, `Intra Edge: ${label}`, undefined);
     }
     if (interEdgeQueryLayer.edges.data.length > 0) {
       console.log('Inter Edge Query:');
       console.log(interEdgeQueryLayer);
+      // console.log(JSON.stringify(interEdgeQueryLayer));
       controller.addLayer(interEdgeQueryLayer, `Inter Edge: ${label}`, undefined);
     }
 
@@ -101,10 +104,14 @@ export async function bundledEdges(container: HTMLElement): Promise<void> {
         layers[0].edges.data,
         layers[1].nodes.data,
         {
-          alpha: 0.4,
-          nearDepth: 0.9,
+          alpha: 0.99,
+          fade: 0.0,
+          desaturate: 0.0,
+          nearDepth: 0.1,
+          farDepth: 0.2
         }
       ),
+      controller,
     );
   });
 }

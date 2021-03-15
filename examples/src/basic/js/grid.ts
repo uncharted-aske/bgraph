@@ -65,7 +65,8 @@ export async function grid(container: HTMLElement): Promise<void> {
   const edgesLayer = {
     data: edges,
     options: {
-      alpha: 0.50,
+      desaturate: 0.50,
+      fade: 0.8
     },
   };
 
@@ -102,7 +103,10 @@ export async function grid(container: HTMLElement): Promise<void> {
   renderSearchPane(
     searchPaneContainer,
     onSearchBuilder(G, controller, 'Straight', {
-      alpha: 0.50,
+      alpha: 1.0,
+      fade: 0,
+      desaturate: 0,
     }),
+    controller
   );
 }
