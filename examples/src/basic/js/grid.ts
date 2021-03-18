@@ -4,6 +4,28 @@ import { renderSearchPane, onSearchBuilder } from '../../core/search';
 import { graph } from '@uncharted-aske/grafer/build/dist/mod.js';
 import { renderLayout } from '../../core/layout';
 
+function transformToBGraph(nodes, edges) {
+  // FIXME: Function creates a shallow copy of nodes/edges
+  const nodeMap = {};
+  const newNodes = nodes.map(node => {
+    const newNode = Object.assign({}, node, {_type: 'node'});
+    nodeMap[newNode._id] = newNode;
+    return newNode;
+  });
+
+  const newEdges = [];
+  for (let i = 0; i < edges.length; i++) {
+    const edge = Object.assign({}, edges[i], {_type: 'edge'});
+    const source = {_id: `source_${edge._id}`, _out: edge._out, _in: edge._id};
+    const target = {_id: `target_${edge._id}`, _out: edge._id, _in: edge._in};
+    newNodes.push(edge);
+    newEdges.push(source);
+    newEdges.push(target);
+  }
+  return [newNodes, newEdges];
+}
+
+
 export async function grid(container: HTMLElement): Promise<void> {
   const edges = [
     { _id: 'AE', id: 'AE', source: 'A', target: 'E', _out: 'A', _in: 'E', sourceColor: '#5e81ac', targetColor: '#b48ead', colors: "GR", x: 10,  y: -10 },
@@ -42,6 +64,10 @@ export async function grid(container: HTMLElement): Promise<void> {
 
   const edgesLayer = {
     data: edges,
+    options: {
+      desaturate: 0.50,
+      fade: 0.8
+    },
   };
 
   const labelsLayer = {
@@ -66,7 +92,8 @@ export async function grid(container: HTMLElement): Promise<void> {
       labels: labelsLayer
     },
   ];
-  const G = bgraph.graph(nodes, edges);
+  const [bNodes, bEdges] = transformToBGraph(nodes, edges);
+  const G = bgraph.graph(bNodes, bEdges);
 
   renderLayout(container);
   const graphContainer = document.getElementById('graph-container');
@@ -76,8 +103,10 @@ export async function grid(container: HTMLElement): Promise<void> {
   renderSearchPane(
     searchPaneContainer,
     onSearchBuilder(G, controller, 'Straight', {
-      alpha: 0.50,
-      nearDepth: 0.9,
+      alpha: 1.0,
+      fade: 0,
+      desaturate: 0,
     }),
+    controller
   );
 }

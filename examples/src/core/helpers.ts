@@ -12,6 +12,11 @@ export interface LayoutInfo {
   nodesFile: File;
   nodeEdges: string;
   nodeEdgesFile: File;
+  // BGraph Info
+  bnodes: string;
+  bnodesFile: File;
+  bnodeEdges: string;
+  bnodeEdgesFile: File;
 }
 
 export enum COLORS {

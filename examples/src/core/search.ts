@@ -1,7 +1,7 @@
 import Tweakpane from 'tweakpane';
 import { COLORS, deepCopy } from './helpers';
 import { IGraph } from '../../../src/graph/graph';
-import { addLayer } from './graph';
+import { addLayer, renderDebugMenuPane } from './graph';
 import { GraferController } from '@uncharted-aske/grafer/build/dist/mod';
 
 function rgbToHex(r, g, b) {
@@ -9,7 +9,7 @@ function rgbToHex(r, g, b) {
   return hex.slice(0, 7);
 }
 
-export function renderSearchPane(searchContainer: HTMLElement, onSearch) {
+export function renderSearchPane(searchContainer: HTMLElement, onSearch, controller: GraferController) {
   let selectedColor: string = COLORS.PALE_GOLD;
   let label = 'Query Label';
 
@@ -27,6 +27,16 @@ export function renderSearchPane(searchContainer: HTMLElement, onSearch) {
   pane.addInput(paneParams, 'search');
   pane.addInput(paneParams, 'color');
 
+  // Add remove layer button
+  const removeLayerButton = pane.addButton({title: 'Remove Layer'});
+  removeLayerButton.on('click', () => {
+    if (controller.viewport.graph.layers.length > 2) {
+      // Only remove query layers
+      controller.removeLayerByIndex(0);
+      renderDebugMenuPane(controller.viewport);
+    }
+  });
+
   pane.on('change', value => {
     if (typeof value === 'object' && value !== null && value['r'] && value['g'] && value['b']) {
       // Color change
@@ -41,27 +51,6 @@ export function renderSearchPane(searchContainer: HTMLElement, onSearch) {
   });
 }
 
-export function transformVertexToEdgeResults(vertices) {
-  // Result prints out a list of vertices that satisfy our query,
-  // however to highlight graph edges we also want a list of edges
-  // TODO: This should be an output transform in the search engine
-  const edgeMap = new Map();
-  vertices.forEach(vertex => {
-    vertex._in.forEach(edge => {
-      if (!edgeMap.has(edge._id)) {
-        edgeMap.set(edge._id, edge);
-      }
-    });
-    vertex._out.forEach(edge => {
-      if (!edgeMap.has(edge._id)) {
-        edgeMap.set(edge._id, edge);
-      }
-    });
-  });
-  const edges = Array.from(edgeMap.values());
-  return edges;
-}
-
 export function onSearchBuilder(
   G: IGraph, // G namespace injected for use in query evaluation
   controller: GraferController,
@@ -70,14 +59,13 @@ export function onSearchBuilder(
 ) {
   return function(query: string, label: string, color) {
     const result = eval(query);
-    // Result prints out a list of vertices that satisfy our query,
-    // however to highlight graph edges we also want a list of edges
-    let edges = transformVertexToEdgeResults(result);
-    edges = deepCopy(edges, ['_in', '_out']);
-    console.log('Query results:');
-    console.log(edges);
+    const bnodes = deepCopy(result, ['_in', '_out']);
 
-    addLayer(controller, edges, label, color, type, options);
-    return edges;
+    // Result prints out a list of vertices that satisfy our query,
+    console.log('Query results: ');
+    console.log(bnodes);
+
+    addLayer(controller, bnodes, label, color, type, options);
+    return bnodes;
   };
 }
