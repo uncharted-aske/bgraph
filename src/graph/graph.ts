@@ -64,7 +64,7 @@ export function prototype(bgraph: IBGraph): IGraphProtoType {
     if(!vertexProto._id && vertexProto._id != 0) {
       vertexProto._id = this.autoid++;
     } else if(this.findVertexById(vertexProto._id)) {
-      // return bgraph.error('A vertex with id ' + vertexProto._id + ' already exists');
+      return bgraph.error('A vertex with id ' + vertexProto._id + ' already exists');
     }
 
     const vertex = vertexProto as IVertex;
