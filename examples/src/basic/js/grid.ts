@@ -1,7 +1,7 @@
 import { bgraph } from '../../../../src';
 import { renderGraph } from '../../core/graph';
 import { renderSearchPane, onSearchBuilder } from '../../core/search';
-import { graph } from '@uncharted-aske/grafer/build/dist/mod.js';
+import { graph } from '@uncharted.software/grafer';
 import { renderLayout } from '../../core/layout';
 
 function transformToBGraph(nodes, edges) {
