@@ -26,6 +26,7 @@
     "@rollup/plugin-commonjs": "^17.0.0",
     "@rollup/plugin-node-resolve": "^11.0.1",
     "@rollup/plugin-replace": "^2.3.4",
+    "@uncharted.software/grafer": "0.3.0",
     "globby": "^11.0.1",
     "glslify": "^7.1.1",
     "lit-element": "^2.4.0",

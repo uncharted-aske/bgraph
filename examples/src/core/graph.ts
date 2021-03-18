@@ -1,4 +1,4 @@
-import { GraferController, UX } from '@uncharted-aske/grafer/build/dist/mod.js';
+import { GraferController, UX } from '@uncharted.software/grafer';
 
 
 function createGrafCanvas(container) {

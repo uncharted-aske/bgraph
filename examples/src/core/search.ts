@@ -2,7 +2,7 @@ import Tweakpane from 'tweakpane';
 import { COLORS, deepCopy } from './helpers';
 import { IGraph } from '../../../src/graph/graph';
 import { addLayer, renderDebugMenuPane } from './graph';
-import { GraferController } from '@uncharted-aske/grafer/build/dist/mod';
+import { GraferController } from '@uncharted.software/grafer';
 
 function rgbToHex(r, g, b) {
   const hex = "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);

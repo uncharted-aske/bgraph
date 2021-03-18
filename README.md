@@ -12,19 +12,7 @@ BGraph began as a TypeScript rewrite of Dann Toliver's Dagoba: in-memory graph d
 $ yarn install
 ```
 
-2. To run example interface you must link `@uncharted/grafer` to your `package.json`. From `grafer`'s root directory run:
-```bash
-$ yarn build
-$ yarn link
-```
-
-3. From bgraph's root directory run:
-
-```bash
-$ yarn link @uncharted-aske/grafer
-```
-
-4. Start development interface
+2. Start development interface
 ```bash
 $ yarn develop
 ```

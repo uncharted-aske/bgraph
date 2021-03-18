@@ -1,6 +1,6 @@
 import { html, render } from 'lit-html';
 import Tweakpane from 'tweakpane';
-import { graph } from '@uncharted-aske/grafer/build/dist/mod.js';
+import { graph } from '@uncharted.software/grafer';
 import {LayoutInfo, parseJSONL, COLORS} from '../core/helpers';
 import { IGraph } from '../../../src/graph/graph';
 

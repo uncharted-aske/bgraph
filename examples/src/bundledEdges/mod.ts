@@ -1,5 +1,5 @@
 import { bgraph } from "../../../src";
-import { GraferController } from '@uncharted-aske/grafer/build/dist/mod';
+import { GraferController } from '@uncharted.software/grafer';
 import { renderMenu, loadGraph } from "./loader";
 import { renderSearchPane } from "../core/search";
 import { renderGraph, addLayer, renderDebugMenuPane } from "../core/graph";
