@@ -17,11 +17,7 @@
     "watch": "rollup -cw",
     "develop": "yarn build:dev --watch --config-dev-server"
   },
-  "dependencies": {
-    "@dekkai/data-source": "^0.1.0",
-    "@dekkai/event-emitter": "^1.1.0",
-    "dekkai": "^0.3.6"
-  },
+  "dependencies": {},
   "devDependencies": {
     "@rollup/plugin-commonjs": "^17.0.0",
     "@rollup/plugin-node-resolve": "^11.0.1",

@@ -31,7 +31,7 @@ export async function parseJSONL(input, cb): Promise<void> {
 
   // load 16MB chunks
   const sizeOf16MB = 16 * 1024 * 1024;
-  const byteLength = file.byteLength;
+  const byteLength = await file.byteLength;
   const decoder = new TextDecoder();
   const lineBreak = '\n'.charCodeAt(0);
 
