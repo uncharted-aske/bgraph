@@ -1,28 +1,46 @@
 {
-  "name": "bgraph",
+  "name": "@uncharted.software/bgraph",
   "version": "0.1.0",
   "description": "bgraph is an in-memory browser-compatible graph database",
-  "main": "dist/index.js",
-  "module": "dist/index.es.js",
+  "author": "Uncharted Software",
+  "license": "Apache-2.0",
+  "main": "build/lib/index.js",
+  "types": "build/types/index.d.ts",
+  "type": "module",
   "files": [
-    "dist"
+    "build/dist",
+    "build/lib",
+    "build/types"
   ],
-  "types": "dist/index.d.ts",
+  "keywords": [
+    "graph",
+    "query",
+    "database",
+    "memory"
+  ],
   "scripts": {
-    "build": "rollup -c",
-    "build:dev": "rollup --config --config-dev",
+    "build": "run-p build:all build:types",
+    "build:all": "node esbuild.mjs --all",
+    "build:dist": "node esbuild.mjs --dist",
+    "build:examples": "node esbuild.mjs --examples",
+    "build:lib": "node esbuild.mjs --lib",
+    "build:types": "tsc --declaration --emitDeclarationOnly --skipLibCheck --project ./tsconfig.d.json --outDir ./build/types",
     "clean": "run-p clean:**",
     "clean:build": "rimraf build",
     "clean:cache": "rimraf .rts2_cache",
-    "watch": "rollup -cw",
-    "develop": "yarn build:dev --watch --config-dev-server"
+    "watch": "run-p watch:*",
+    "watch:scripts": "yarn build:all --watch",
+    "watch:types": "yarn build:types --watch",
+    "develop": "yarn build:examples --watch --dev-server",
+    "esbuild": "node esbuild.mjs",
+    "examples": "run-s build:examples",
+    "lint": "eslint --config ./.eslintrc.cjs \"./{src,tests,examples}/**/*.{js,ts}\""
   },
   "dependencies": {},
   "devDependencies": {
-    "@rollup/plugin-commonjs": "^17.0.0",
-    "@rollup/plugin-node-resolve": "^11.0.1",
-    "@rollup/plugin-replace": "^2.3.4",
     "@uncharted.software/grafer": "0.3.0",
+    "copy": "^0.3.2",
+    "esbuild": "^0.9.4",
     "globby": "^11.0.1",
     "glslify": "^7.1.1",
     "lit-element": "^2.4.0",
@@ -30,12 +48,9 @@
     "live-server": "^1.2.1",
     "npm-run-all": "^4.1.5",
     "rimraf": "^3.0.2",
-    "rollup": "^2.34.2",
-    "rollup-plugin-serve": "^1.1.0",
-    "rollup-plugin-sourcemaps": "^0.6.3",
-    "rollup-plugin-typescript2": "^0.29.0",
     "run-p": "^0.0.0",
     "tweakpane": "^1.5.7",
-    "typescript": "^4.1.2"
+    "typescript": "^4.1.2",
+    "yargs": "^16.2.0"
   }
 }
