@@ -4,6 +4,7 @@
   "description": "bgraph is an in-memory browser-compatible graph database",
   "author": "Uncharted Software",
   "license": "Apache-2.0",
+  "repository": "https://github.com/uncharted-aske/bgraph",
   "main": "build/lib/index.js",
   "types": "build/types/index.d.ts",
   "type": "module",
