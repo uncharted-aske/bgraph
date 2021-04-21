@@ -110,8 +110,8 @@ export function prototype(bgraph: IBGraph): IGraphProtoType {
 
   // General vertex search method
   G.findVertices = function(this: IGraph, args: (VertexIndex | Record<string, any>)[]): IVertex[] {
-    if(typeof args[0] == 'object') {
-      // Filter vertices to match object property values
+    if(typeof args[0] == 'object' || typeof args[0] == 'function') {
+      // Filter vertices to match object property values or that pass filter function
       return this.searchVertices(args[0]);
     } else if(args.length == 0) {
       // Costly copy of all vertices
@@ -134,10 +134,16 @@ export function prototype(bgraph: IBGraph): IGraphProtoType {
     return this.vertexIndex.get(vertex_id);
   }
 
-  G.searchVertices = function(filter: Record<string, any>): IVertex[] {
-    return this.vertices.filter(function(vertex: IVertex) {
-      return bgraph.objectFilter(vertex, filter);
-    });
+  G.searchVertices = function(filter: (vertex: any) => Boolean | Record<string, any>): IVertex[] {
+    if (typeof filter === 'object') {
+      return this.vertices.filter(function(vertex: IVertex) {
+        return bgraph.objectFilter(vertex, filter);
+      });
+    } else if (typeof filter === 'function') {
+      return this.vertices.filter(filter);
+    } else {
+      bgraph.error('Filter must be function or object: ' + filter);
+    }
   }
 
   G.findOutEdges = function(vertex: IVertex): IEdge[] { return vertex._out; }
