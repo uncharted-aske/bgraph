@@ -28,6 +28,12 @@ function getExample(examples: any, path: any) {
 function main(): void {
   const pathName = window.location.pathname;
   const pathComponents = pathName.split('/').filter(v => Boolean(v));
+  // if the site is being served from github pages, remove the first component
+  let basePath = '';
+  if (window.location.hostname.indexOf('github.io') !== -1) {
+      basePath = `/${pathComponents.shift()}`;
+  }
+
   const example = getExample(examples, pathComponents);
 
   console.log(example);
