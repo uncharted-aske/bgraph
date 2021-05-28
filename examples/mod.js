@@ -22306,7 +22306,6 @@ function getExample(examples2, path) {
   return null;
 }
 function main() {
-  console.log("Did this happen??");
   const pathName = window.location.pathname;
   const pathComponents = pathName.split("/").filter((v) => Boolean(v));
   const example = getExample(examples, pathComponents);
@@ -22317,7 +22316,5 @@ function main() {
     renderMenu(document.body, examples, pathComponents);
   }
 }
-document.addEventListener("DOMContentLoaded", () => {
-  main();
-});
+main();
 //# sourceMappingURL=mod.js.map
