@@ -41,7 +41,7 @@ function main(): void {
   if (example) {
     example(document.body);
   } else {
-    renderMenu(document.body, examples, pathComponents);
+    renderMenu(document.body, examples, pathComponents, basePath);
   }
 }
 
