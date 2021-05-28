@@ -1,30 +1,30 @@
-import { IBGraph } from ".."
-import { IVertex, IEdge } from "../graph/graph"
-import { State, Gremlin } from "../query/query"
+import { IBGraph } from "..";
+import { IVertex, IEdge } from "../graph/graph";
+import { State, Gremlin } from "../query/query";
 
 export interface IUtils {
   // TODO: Specify method types
   makeGremlin: (vertex: IVertex, state: State) => Gremlin,
   gotoVertex: (gremlin: Gremlin, vertex: IVertex)=> Gremlin,
-  filterEdges: (filter: string | string[])=> (edge: IEdge) => Boolean,
-  objectFilter: (thing: any, filter: Record<string, any>) => Boolean,
+  filterEdges: (filter: string | string[])=> (edge: IEdge) => boolean,
+  objectFilter: (thing: any, filter: Record<string, any>) => boolean,
   error: (msg: string, err?: Error) => false,
   extend: (list: any, defaults: any) => any,
   remove: (list: any, item: any) => any,
 }
 
-export function hydrate(bgraph: IBGraph) {
+export function hydrate(bgraph: IBGraph): void {
   bgraph.makeGremlin = function(vertex: IVertex, state: State): Gremlin {
     return {vertex: vertex, state: state || {} as State };
-  }
+  };
 
   bgraph.gotoVertex = function(gremlin: Gremlin, vertex: IVertex): Gremlin {
     // TODO: Add path tracking state to keep track of vertices gremlin visits
     return bgraph.makeGremlin(vertex, gremlin.state); // Clone gremlin
-  }
+  };
 
-  bgraph.filterEdges = function(filter: string | string[]): (edge: IEdge) => Boolean {
-    return function(edge: IEdge) {
+  bgraph.filterEdges = function(filter: string | string[]): (edge: IEdge) => boolean {
+    return function(edge: IEdge): boolean {
       if(!filter) {
         return true;
       }
@@ -38,27 +38,29 @@ export function hydrate(bgraph: IBGraph) {
       }
       // Match edge to object property values
       return bgraph.objectFilter(edge, filter);
-    }
-  }
+    };
+  };
 
-  bgraph.objectFilter = function(thing: any, filter: Record<string, any>): Boolean {
+  bgraph.objectFilter = function(thing: any, filter: Record<string, any>): boolean {
     for(const key in filter) {
       if(thing[key] !== filter[key]) {
         return false;
       }
     }
     return true;
-  }
+  };
 
   // TODO: Rethink error return value
   bgraph.error = function(msg: string, err?: Error): false {
     if (err) {
+      // eslint-disable-next-line no-console
       console.log(msg, err);
     } else {
+      // eslint-disable-next-line no-console
       console.log(msg);
     }
     return false;
-  }
+  };
 
   bgraph.extend = function(list: any, defaults: any): any {
     return Object.keys(defaults).reduce(function(acc, key) {
@@ -66,9 +68,9 @@ export function hydrate(bgraph: IBGraph) {
       acc[key] = defaults[key];
       return acc;
     }, list);
-  }
+  };
 
   bgraph.remove = function(list: any, item: any): any {
     return list.splice(list.indexOf(item), 1);
-  }
+  };
 }

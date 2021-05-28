@@ -24,7 +24,7 @@ export enum COLORS {
   BRASS_RED    = '#d08770',
   PALE_GOLD    = '#ebcb8b',
   GLACIER_BLUE = '#81a1c1',
-};
+}
 
 export async function parseJSONL(input, cb): Promise<void> {
   const file = await DataFile.fromLocalSource(input);
@@ -65,7 +65,7 @@ export function createElementFromHTML(html: string): ChildNode {
 }
 
 export const deepCopy = (inObject, keyBlackList?: Array<any>) => {
-  let outObject, value, key;
+  let value, key;
 
   if (typeof inObject !== "object" || inObject === null) {
     return inObject; // Return the value if inObject is not an object
@@ -73,7 +73,7 @@ export const deepCopy = (inObject, keyBlackList?: Array<any>) => {
 
   // Create an array or object to hold the values
   const isArray = Array.isArray(inObject);
-  outObject = isArray ? [] : {}
+  const outObject = isArray ? [] : {};
 
   for (key in inObject) {
     if (!isArray && keyBlackList?.includes(key)) {
@@ -87,4 +87,4 @@ export const deepCopy = (inObject, keyBlackList?: Array<any>) => {
   }
 
   return outObject;
-}
+};

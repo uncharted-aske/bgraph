@@ -8,4 +8,4 @@ export function renderLayout (container: HTMLElement) {
     </div>
   `;
   render(layoutHTML, container);
-};
+}

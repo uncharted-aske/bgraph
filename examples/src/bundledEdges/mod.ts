@@ -12,7 +12,7 @@ export function onSearchBuilder(
   grafIntraEdges,
   grafInterEdges,
   grafNodes,
-  options,
+  options
 ) {
   return function(query: string, label: string, color) {
     const queryResults = eval(query);
@@ -108,10 +108,10 @@ export async function bundledEdges(container: HTMLElement): Promise<void> {
           fade: 0.0,
           desaturate: 0.0,
           nearDepth: 0.1,
-          farDepth: 0.2
+          farDepth: 0.2,
         }
       ),
-      controller,
+      controller
     );
   });
 }

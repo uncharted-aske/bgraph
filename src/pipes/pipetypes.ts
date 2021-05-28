@@ -26,16 +26,17 @@ export interface IPipe {
     => PipeResult,
 }
 
-export function hydrate(bgraph: IBGraph) {
+export function hydrate(bgraph: IBGraph): void {
   // Extend query object with new pipetype method
   bgraph.addPipetype = function(name: PipeTypes, fun: PipeFunction): void {
     bgraph.Pipetypes[name] = fun;
     bgraph.Q[name] = function(this: IQuery): IQuery {
       // Capture the pipetype name and arguments passed to function
       // ex. name(1,2,3)
+      // eslint-disable-next-line prefer-rest-params
       return this.add(name, [].slice.apply(arguments)); // Type coerce IArguments to any[]
-    }
-  }
+    };
+  };
 
   bgraph.getPipetype = function(name: PipeTypes): PipeFunction {
     const pipetype: PipeFunction = bgraph.Pipetypes[name];
@@ -45,12 +46,12 @@ export function hydrate(bgraph: IBGraph) {
     }
 
     return pipetype || bgraph.fauxPipetype;
-  }
+  };
 
   bgraph.fauxPipetype = function(graph: IGraph, args: any[], maybe_gremlin: MaybeGremlin): MaybeGremlin {
     // Used when unable to find user specified pipetype to keep pipeline going
     return maybe_gremlin || 'pull';
-  }
+  };
 
   // Built-in Pipetypes TODO: Move to own directory
 
@@ -73,7 +74,7 @@ export function hydrate(bgraph: IBGraph) {
     const find_method = dir == 'out' ? 'findOutEdges' : 'findInEdges';
     const edge_list   = dir == 'out' ? '_in' : '_out';
 
-    return function(graph, args, gremlin, state) {
+    return function(graph, args, gremlin, state): Gremlin | 'pull' {
       if(!gremlin && (!state.edges || !state.edges.length)) {
         // Initialize query, request new gremlin from predecessor
         return 'pull';
@@ -101,8 +102,8 @@ export function hydrate(bgraph: IBGraph) {
 
       const vertex = state.edges.pop()[edge_list];
       return bgraph.gotoVertex(state.gremlin, vertex);
-    }
-  }
+    };
+  };
 
   bgraph.addPipetype('in',   bgraph.simpleTraversal('in'));
   bgraph.addPipetype('out',  bgraph.simpleTraversal('out'));
@@ -133,7 +134,7 @@ export function hydrate(bgraph: IBGraph) {
     }
 
     if(typeof args[0] != 'function') {
-      bgraph.error('Filter arg must be function or object: ' + args[0])
+      bgraph.error('Filter arg must be function or object: ' + args[0]);
       return gremlin; // Ignore filter command pass gremlin forward
     }
 
@@ -182,7 +183,7 @@ export function hydrate(bgraph: IBGraph) {
 
     if(!state.vertices || !state.vertices.length) { // Initialize state
       const obj = (gremlin.state||{}).as || {};
-      state.vertices = args.map(function(id) {return obj[id]}).filter(Boolean);
+      state.vertices = args.map(function(id) {return obj[id];}).filter(Boolean);
     }
 
     if(!state.vertices.length) return 'pull'; // Request next batch

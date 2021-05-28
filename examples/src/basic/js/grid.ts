@@ -66,7 +66,7 @@ export async function grid(container: HTMLElement): Promise<void> {
     data: edges,
     options: {
       desaturate: 0.50,
-      fade: 0.8
+      fade: 0.8,
     },
   };
 
@@ -89,7 +89,7 @@ export async function grid(container: HTMLElement): Promise<void> {
       name: "Grid",
       nodes: nodesLayer,
       edges: edgesLayer,
-      labels: labelsLayer
+      labels: labelsLayer,
     },
   ];
   const [bNodes, bEdges] = transformToBGraph(nodes, edges);

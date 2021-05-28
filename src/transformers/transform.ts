@@ -4,7 +4,7 @@ import { Step } from "../query/query";
 export interface IQueryTransformer {
   priority: number,
   fun: IQueryTransformerFunction,
-};
+}
 
 export type IQueryTransformerFunction = (...args: any[]) => Step[];
 
@@ -14,7 +14,7 @@ export interface ITransform {
   transform: (program: Step[]) => Step[],
 }
 
-export function hydrate(bgraph: IBGraph) {
+export function hydrate(bgraph: IBGraph): void {
   bgraph.addTransformer = function(fun: IQueryTransformerFunction, priority: number): void | false {
     if(typeof fun != 'function') {
       return bgraph.error('Invalid transformer function');
@@ -29,11 +29,11 @@ export function hydrate(bgraph: IBGraph) {
     }
 
     bgraph.T.splice(i, 0, {priority: priority, fun: fun});
-  }
+  };
 
   bgraph.transform = function(program: Step[]): Step[] {
     return bgraph.T.reduce(function(acc, transformer: IQueryTransformer) {
       return transformer.fun(acc);
     }, program);
-  }
+  };
 }

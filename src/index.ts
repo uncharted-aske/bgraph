@@ -35,7 +35,7 @@ _bgraph.graph = function(V?: IVertexProto[], E?: IEdgeProto[]): IGraph {
   if(Array.isArray(V)) graph.addVertices(V);
   if(Array.isArray(E)) graph.addEdges(E);
   return graph;
-}
+};
 
 // Initialize query prototype
 _bgraph.Q = query.prototype(_bgraph as IBGraph);
@@ -49,7 +49,7 @@ _bgraph.query = function(graph: IGraph): IQuery {
   query.program = [];
   query.gremlins = [];
   return query;
-}
+};
 
 // Initialize transformers and extend bgraph with transform methods
 _bgraph.T = [];
