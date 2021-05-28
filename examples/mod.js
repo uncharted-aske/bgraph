@@ -9983,7 +9983,7 @@ function getExamplePaths(examples2, currentPath, entries = [], path = "") {
   }
   return entries;
 }
-function renderMenu(element, examples2, pathComponents) {
+function renderMenu(element, examples2, pathComponents, basePath) {
   const currentPath = pathComponents.length ? `/${pathComponents.join("/")}` : "";
   const entries = getExamplePaths(examples2, currentPath);
   const container = document.createElement("div");
@@ -9992,7 +9992,7 @@ function renderMenu(element, examples2, pathComponents) {
   header.className = "menu-header";
   container.appendChild(header);
   if (pathComponents.length) {
-    const backPath = `/${pathComponents.slice(0, -1).join("/")}`;
+    const backPath = `${basePath}/${pathComponents.slice(0, -1).join("/")}`;
     const div4 = document.createElement("div");
     div4.className = "menu-back";
     const a = document.createElement("a");
@@ -10012,7 +10012,7 @@ function renderMenu(element, examples2, pathComponents) {
     div4.className = "menu-item";
     div4.innerText = entries[i];
     const a = document.createElement("a");
-    a.href = entries[i];
+    a.href = `${basePath}${entries[i]}`;
     a.appendChild(div4);
     items.appendChild(a);
   }
@@ -22308,6 +22308,10 @@ function getExample(examples2, path) {
 function main() {
   const pathName = window.location.pathname;
   const pathComponents = pathName.split("/").filter((v) => Boolean(v));
+  let basePath = "";
+  if (window.location.hostname.indexOf("github.io") !== -1) {
+    basePath = `/${pathComponents.shift()}`;
+  }
   const example = getExample(examples, pathComponents);
   console.log(example);
   if (example) {
