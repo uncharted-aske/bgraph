@@ -5,12 +5,12 @@ export type VertexIndex = number | string;
 
 export interface IVertexProto {
   _id: VertexIndex,
-};
+}
 
 export interface IVertex extends IVertexProto {
   _out: IEdge[],
   _in: IEdge[],
-};
+}
 
 export interface IEdgeProto {
   _out: VertexIndex,
@@ -21,7 +21,7 @@ export interface IEdgeProto {
 export interface IEdge extends Omit<IEdgeProto, '_out' | '_in'> {
   _out: IVertex,
   _in: IVertex,
-};
+}
 
 export interface IGraphProtoType {
   v: (this: IGraph) => IQuery,
@@ -37,14 +37,14 @@ export interface IGraphProtoType {
   searchVertices: (filter: Record<string, any>) => IVertex[],
   findOutEdges: (vertex: IVertex) => IEdge[],
   findInEdges: (vertex: IVertex) => IEdge[],
-};
+}
 
 export interface IGraph extends IGraphProtoType {
   edges: IEdge[],
   vertices: IVertex[],
   vertexIndex: Map<VertexIndex, IVertex>
   autoid: number, // Counter tracking last used automatic index
-};
+}
 
 export function prototype(bgraph: IBGraph): IGraphProtoType {
   const G: Partial<IGraphProtoType> = {};
@@ -52,9 +52,10 @@ export function prototype(bgraph: IBGraph): IGraphProtoType {
   // Query intiliazation method, all queries begin with: g.v()...
   G.v = function(this: IGraph): IQuery {
     const query = bgraph.query(this);
+    // eslint-disable-next-line prefer-rest-params
     query.add('vertex', [].slice.call(arguments)); // add vertex as first query pipe
     return query;
-  }
+  };
 
   G.addVertex = function(this: IGraph, vertexProto: IVertexProto): VertexIndex | false {
     // TODO: Use hashes to autoid
@@ -74,7 +75,7 @@ export function prototype(bgraph: IBGraph): IGraphProtoType {
     vertex._out = [];
     vertex._in = [];
     return vertex._id;
-  }
+  };
 
   G.addEdge = function(this: IGraph, edgeProto: IEdgeProto): false | void {
     const edge: Partial<IEdge> = edgeProto as unknown as Partial<IEdge>;
@@ -90,23 +91,23 @@ export function prototype(bgraph: IBGraph): IGraphProtoType {
     edge._out._out.push(edge as IEdge); // Populate source vertex's outward edges with new edge
     edge._in._in.push(edge as IEdge); // Populate source vertex's outward edges with new edge
     this.edges.push(edge as IEdge);
-  }
+  };
 
-  G.addVertices = function(this: IGraph, vertexProtos: IVertexProto[]): void { vertexProtos.forEach(this.addVertex.bind(this)) }
-  G.addEdges = function(this: IGraph, edgeProtos: IEdgeProto[]): void { edgeProtos.forEach(this.addEdge.bind(this)) }
+  G.addVertices = function(this: IGraph, vertexProtos: IVertexProto[]): void { vertexProtos.forEach(this.addVertex.bind(this)); };
+  G.addEdges = function(this: IGraph, edgeProtos: IEdgeProto[]): void { edgeProtos.forEach(this.addEdge.bind(this)); };
 
   G.removeVertex = function(this: IGraph, vertex: IVertex): void {
     vertex._in.slice().forEach(G.removeEdge.bind(this));
     vertex._out.slice().forEach(G.removeEdge.bind(this));
     bgraph.remove(this.vertices, vertex);
     this.vertexIndex.delete(vertex._id);
-  }
+  };
 
   G.removeEdge = function(this: IGraph, edge: IEdge): void {
     bgraph.remove(edge._in._in, edge);
     bgraph.remove(edge._out._out, edge);
     bgraph.remove(this.edges, edge);
-  }
+  };
 
   // General vertex search method
   G.findVertices = function(this: IGraph, args: (VertexIndex | Record<string, any>)[]): IVertex[] {
@@ -120,7 +121,7 @@ export function prototype(bgraph: IBGraph): IGraphProtoType {
       // Find all vertices with unique id
       return this.findVerticesByIds(args as VertexIndex[]);
     }
-  }
+  };
 
   G.findVerticesByIds = function(this: IGraph, ids: VertexIndex[]): IVertex[] {
     if(ids.length == 1) {
@@ -128,13 +129,13 @@ export function prototype(bgraph: IBGraph): IGraphProtoType {
       return vertex ? [vertex] : [];
     }
     return ids.map(this.findVertexById.bind(this)).filter(Boolean) as IVertex[];
-  }
+  };
 
   G.findVertexById = function(this: IGraph, vertex_id: VertexIndex): IVertex {
     return this.vertexIndex.get(vertex_id);
-  }
+  };
 
-  G.searchVertices = function(filter: (vertex: any) => Boolean | Record<string, any>): IVertex[] {
+  G.searchVertices = function(filter: (vertex: any) => boolean | Record<string, any>): IVertex[] {
     if (typeof filter === 'object') {
       return this.vertices.filter(function(vertex: IVertex) {
         return bgraph.objectFilter(vertex, filter);
@@ -144,10 +145,10 @@ export function prototype(bgraph: IBGraph): IGraphProtoType {
     } else {
       bgraph.error('Filter must be function or object: ' + filter);
     }
-  }
+  };
 
-  G.findOutEdges = function(vertex: IVertex): IEdge[] { return vertex._out; }
-  G.findInEdges  = function(vertex: IVertex): IEdge[] { return vertex._in;  }
+  G.findOutEdges = function(vertex: IVertex): IEdge[] { return vertex._out; };
+  G.findInEdges  = function(vertex: IVertex): IEdge[] { return vertex._in;  };
 
   return G as IGraphProtoType;
 }

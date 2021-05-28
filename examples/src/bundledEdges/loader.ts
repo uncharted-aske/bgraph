@@ -163,7 +163,7 @@ export async function loadGraph(info: LayoutInfo, G: IGraph): Promise<any> {
         fade: 0.9,
         desaturate: 0.5,
         nearDepth: 0.95,
-        farDeth: 1.00
+        farDeth: 1.00,
       },
     };
 
@@ -173,7 +173,7 @@ export async function loadGraph(info: LayoutInfo, G: IGraph): Promise<any> {
       options: {
         alpha: 1.0,
         fade: 0.5,
-        desaturate: 0.8
+        desaturate: 0.8,
       },
       mappings: {
         source: (entry): number => 'sourceCluster' in entry ? entry.sourceCluster : entry.source,
@@ -187,7 +187,7 @@ export async function loadGraph(info: LayoutInfo, G: IGraph): Promise<any> {
       options: {
         alpha: 1.0,
         fade: 0.5,
-        desaturate: 0.8
+        desaturate: 0.8,
       },
     };
 
@@ -217,7 +217,7 @@ export async function loadGraph(info: LayoutInfo, G: IGraph): Promise<any> {
           fade: 0.65,
           desat: 0.5,
           nearDepth: 0.9,
-          farDepth: 1.00
+          farDepth: 1.00,
         },
       },
       edges,
@@ -254,8 +254,8 @@ export async function loadGraph(info: LayoutInfo, G: IGraph): Promise<any> {
         type: 'Circle',
         data: [],
         options: {
-          farDepth: 0.1
-        }
+          farDepth: 0.1,
+        },
       },
       edges: {
         data: [],
@@ -263,7 +263,7 @@ export async function loadGraph(info: LayoutInfo, G: IGraph): Promise<any> {
           fade: 0.85,
           desaturate: 0.5,
           nearDepth: 0.8,
-          farDepth: 0.9
+          farDepth: 0.9,
         },
       },
       labels: {
@@ -277,7 +277,7 @@ export async function loadGraph(info: LayoutInfo, G: IGraph): Promise<any> {
         options: {
           visibilityThreshold: 8,
           labelPlacement: graph.labels.PointLabelPlacement.TOP,
-          farDepth: 0.1
+          farDepth: 0.1,
         },
       },
     };
@@ -317,7 +317,7 @@ export async function loadGraph(info: LayoutInfo, G: IGraph): Promise<any> {
       });
     }
 
-    bnodes.forEach(G.addVertex.bind(G))
+    bnodes.forEach(G.addVertex.bind(G));
     bedges.forEach(G.addEdge.bind(G));
 
     return { points, layers };

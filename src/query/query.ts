@@ -44,9 +44,9 @@ export function prototype(bgraph: IBGraph): IQueryPrototype {
   Q.run = function(this: IQuery): any[] {
     this.program = bgraph.transform(this.program); // Modify program instructions based on registered transformers
 
-    let max = this.program.length - 1; // Last step in program
+    const max = this.program.length - 1; // Last step in program
     let maybe_gremlin: MaybeGremlin = false;
-    let results: Gremlin[] = []; // Result of query
+    const results: Gremlin[] = []; // Result of query
     let done = -1;
     let pc = max;
 
@@ -66,7 +66,7 @@ export function prototype(bgraph: IBGraph): IQueryPrototype {
         maybe_gremlin = false;
         if(pc-1 > done) {
           pc--; // Move program counter to previous pipe
-          continue
+          continue;
         } else {
           done = pc; // Previous pipe is finished. Move program counter to last step
         }
@@ -92,15 +92,15 @@ export function prototype(bgraph: IBGraph): IQueryPrototype {
 
     return results.map(function(gremlin) { // Return results collected by gremlins or gremlin vertices
       return gremlin.result != null
-           ? gremlin.result : gremlin.vertex } ) as any[];
-  }
+           ? gremlin.result : gremlin.vertex; } ) as any[];
+  };
 
 
   Q.add = function(this: IQuery, pipetype: PipeTypes, args: any[]): IQuery {
     const step: Step = [pipetype, args];
     this.program.push(step); // Add new step to query
     return this;
-  }
+  };
 
   return Q as IQueryPrototype;
 }

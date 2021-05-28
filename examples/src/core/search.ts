@@ -55,7 +55,7 @@ export function onSearchBuilder(
   G: IGraph, // G namespace injected for use in query evaluation
   controller: GraferController,
   type,
-  options,
+  options
 ) {
   return function(query: string, label: string, color) {
     const result = eval(query);
