@@ -26,7 +26,6 @@ function getExample(examples: any, path: any) {
 }
 
 function main(): void {
-  console.log('Did this happen??');
   const pathName = window.location.pathname;
   const pathComponents = pathName.split('/').filter(v => Boolean(v));
   const example = getExample(examples, pathComponents);
@@ -40,6 +39,4 @@ function main(): void {
   }
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-  main();
-});
+main();
