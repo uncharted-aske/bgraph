@@ -1,10 +1,10 @@
 import { IBGraph } from "..";
 import { IVertex, IEdge } from "../graph/graph";
-import { State, Gremlin } from "../query/query";
+import { GremlinState, Gremlin } from "../query/query";
 
 export interface IUtils {
-  // TODO: Specify method types
-  makeGremlin: (vertex: IVertex, state: State) => Gremlin,
+  cloneGremlinState: (state: GremlinState) => GremlinState,
+  makeGremlin: (vertex: IVertex, state: GremlinState) => Gremlin,
   gotoVertex: (gremlin: Gremlin, vertex: IVertex)=> Gremlin,
   filterEdges: (filter: string | string[])=> (edge: IEdge) => boolean,
   objectFilter: (thing: any, filter: Record<string, any>) => boolean,
@@ -14,13 +14,30 @@ export interface IUtils {
 }
 
 export function hydrate(bgraph: IBGraph): void {
-  bgraph.makeGremlin = function(vertex: IVertex, state: State): Gremlin {
-    return {vertex: vertex, state: state || {} as State };
+  bgraph.cloneGremlinState = function(state: GremlinState) {
+    const newState: Partial<GremlinState> = {};
+    if (state?.as) {
+      newState.as = state.as;
+    }
+    if (state?.path) {
+      newState.path = state.path.slice(); // shallow copy path
+    }
+    return newState as GremlinState;
+  };
+
+  bgraph.makeGremlin = function(vertex: IVertex, state: GremlinState): Gremlin {
+    return {vertex, state };
   };
 
   bgraph.gotoVertex = function(gremlin: Gremlin, vertex: IVertex): Gremlin {
-    // TODO: Add path tracking state to keep track of vertices gremlin visits
-    return bgraph.makeGremlin(vertex, gremlin.state); // Clone gremlin
+    const state = bgraph.cloneGremlinState(gremlin.state);
+    if (state.path) {
+      // Add current vertex to Gremlin's path
+      state.path.push(gremlin.vertex);
+    } else {
+      state.path = [gremlin.vertex];
+    }
+    return bgraph.makeGremlin(vertex, state); // Clone gremlin
   };
 
   bgraph.filterEdges = function(filter: string | string[]): (edge: IEdge) => boolean {
