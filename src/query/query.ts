@@ -13,6 +13,7 @@ export interface GremlinState {
   as?: Map<string, IVertex>,
   path?: Array<IVertex>,
   isResult?: boolean,
+  isSuspended?: boolean,
 }
 
 export interface Gremlin {
@@ -28,6 +29,7 @@ export interface State {
   edges: IEdge[],
   gremlin: Gremlin,
   taken: number,
+  gremlins: Gremlin[],
 }
 
 export interface IQueryPrototype {
