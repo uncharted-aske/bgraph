@@ -10059,9 +10059,7 @@ function prototype(bgraph2) {
         pc--;
       }
     }
-    return results.map(function(gremlin) {
-      return gremlin.result != null ? gremlin.result : gremlin.vertex;
-    });
+    return results;
   };
   Q.add = function(pipetype, args) {
     const step = [pipetype, args];
@@ -10330,11 +10328,27 @@ function hydrate3(bgraph2) {
 
 // src/utils/utils.ts
 function hydrate4(bgraph2) {
+  bgraph2.cloneGremlinState = function(state) {
+    const newState = {};
+    if (state?.as) {
+      newState.as = state.as;
+    }
+    if (state?.path) {
+      newState.path = state.path.slice();
+    }
+    return newState;
+  };
   bgraph2.makeGremlin = function(vertex, state) {
-    return {vertex, state: state || {}};
+    return {vertex, state};
   };
   bgraph2.gotoVertex = function(gremlin, vertex) {
-    return bgraph2.makeGremlin(vertex, gremlin.state);
+    const state = bgraph2.cloneGremlinState(gremlin.state);
+    if (state.path) {
+      state.path.push(gremlin.vertex);
+    } else {
+      state.path = [gremlin.vertex];
+    }
+    return bgraph2.makeGremlin(vertex, state);
   };
   bgraph2.filterEdges = function(filter) {
     return function(edge) {
