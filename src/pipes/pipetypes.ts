@@ -65,6 +65,45 @@ export function hydrate(bgraph: IBGraph): void {
     return maybe_gremlin || 'pull';
   });
 
+  bgraph.addPipetype('suspend', function(graph: IGraph, args: any[], gremlin: Gremlin, state: State): PipeResult {
+    let shouldSuspendGremlin = true;
+
+    if(!gremlin && (!state.gremlins || !state.gremlins.length)) {
+      // Initialize query, request new gremlin from predecessor
+      return 'pull';
+    }
+
+    if(!state.gremlins || !state.gremlins.length) {
+      if((typeof args[0] == 'object' && !bgraph.objectFilter(gremlin.vertex, args[0])) ||
+         (typeof args[0] == 'function' && !args[0](gremlin.vertex, gremlin))) {
+        shouldSuspendGremlin = false;
+      }
+
+      if (shouldSuspendGremlin) {
+        // Initialize state
+        const suspendedGremlinState = bgraph.cloneGremlinState(gremlin.state);
+        suspendedGremlinState.isSuspended = true;
+        const suspendedGremlin = bgraph.makeGremlin(gremlin.vertex, suspendedGremlinState);
+        state.gremlins = [gremlin, suspendedGremlin];
+      } else {
+        state.gremlins = [gremlin];
+      }
+    }
+
+    if(!state.gremlins.length) {
+      // No more suspended gremlins, request new gremlin from predecessor
+      return 'pull';
+    }
+
+    return state.gremlins.pop();
+  });
+
+  bgraph.addPipetype('unsuspend', function(graph: IGraph, args: any[], gremlin: Gremlin, state: State): PipeResult {
+    if(!gremlin) return 'pull'; // Initialize query
+    if (gremlin && gremlin.state.isSuspended) gremlin.state.isSuspended = false; // Unsuspend Gremlin
+    return gremlin;
+  });
+
   bgraph.addPipetype('vertex', function(graph: IGraph, args: any[], gremlin: Gremlin, state: State) {
     if(!state.vertices) {
       // Initialize vertices
@@ -89,6 +128,8 @@ export function hydrate(bgraph: IBGraph): void {
         // Initialize query, request new gremlin from predecessor
         return 'pull';
       }
+
+      if (gremlin && gremlin.state.isSuspended) return gremlin; // Gremlin is suspended do not traverse
 
       if(!state.edges || !state.edges.length) {
         // Initialize state
@@ -128,6 +169,7 @@ export function hydrate(bgraph: IBGraph): void {
 
   bgraph.addPipetype('unique', function(graph: IGraph, args: any[], gremlin: Gremlin, state: State): PipeResult {
     if(!gremlin) return 'pull'; // Initialize query
+    if (gremlin && gremlin.state.isSuspended) return gremlin; // Gremlin is suspended do not traverse
     if(state[gremlin.vertex._id]) return 'pull'; // Gremlin seen, request new gremlin
     state[gremlin.vertex._id] = true; // Track seen gremlins by attached vertex
     return gremlin;
@@ -136,6 +178,7 @@ export function hydrate(bgraph: IBGraph): void {
   // TODO: Update args type to indicate first argument should be an object or function
   bgraph.addPipetype('filter', function(graph: IGraph, args: any[], gremlin: Gremlin, state: State): PipeResult {
     if(!gremlin) return 'pull'; // Initialize query
+    if (gremlin && gremlin.state.isSuspended) return gremlin; // Gremlin is suspended do not traverse
 
     if(typeof args[0] == 'object') {
       // Request new gremlin if current gremlin filtered out
@@ -152,32 +195,6 @@ export function hydrate(bgraph: IBGraph): void {
       return 'pull'; // Gremlin filtered out, request new gremlin
     }
     // Gremlin passed filter pass gremlin forward
-    return gremlin;
-  });
-
-  // TODO: Update args type to indicate first argument should be an object or function
-  bgraph.addPipetype('target', function(graph: IGraph, args: any[], gremlin: Gremlin, state: State): PipeResult {
-    if(!gremlin) return 'pull'; // Initialize query
-
-    if(typeof args[0] == 'object') {
-      if (bgraph.objectFilter(gremlin.vertex, args[0])) {
-        // Mark gremlin as target
-        gremlin.state.isResult = true;
-      }
-      return gremlin;
-    }
-
-    if(typeof args[0] != 'function') {
-      bgraph.error('Filter arg must be function or object: ' + args[0]);
-      return gremlin;
-    }
-
-    if(args[0](gremlin.vertex, gremlin)) {
-      // Mark gremlin as target
-      gremlin.state.isResult = true;
-      return gremlin;
-    }
-    // Pass all Gremlin's forward
     return gremlin;
   });
 

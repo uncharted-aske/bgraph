@@ -39,8 +39,23 @@ export function addLayer(controller: GraferController, queryResults, label, colo
     },
   };
 
+  const flattenedQueryResults = [];
   for (let i = 0; i < queryResults.length; i++) {
-    const result = queryResults[i];
+    const result = queryResults[i].result || queryResults[i].vertex;
+    flattenedQueryResults.push(result);
+
+    // Append path query results
+    // TODO: Consider adding a way to flatten paths as a pipeline step
+    const path = queryResults[i].state?.path || [];
+    for (const vertex of path) {
+      flattenedQueryResults.push(vertex);
+    }
+  }
+
+  for (let i = 0; i < flattenedQueryResults.length; i++) {
+    const result = flattenedQueryResults[i];
+
+
     if (result._type === 'node') {
       // Set node color on query result
       result.color = color;

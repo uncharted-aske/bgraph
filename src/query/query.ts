@@ -13,6 +13,7 @@ export interface GremlinState {
   as?: Map<string, IVertex>,
   path?: Array<IVertex>,
   isResult?: boolean,
+  isSuspended?: boolean,
 }
 
 export interface Gremlin {
@@ -28,6 +29,7 @@ export interface State {
   edges: IEdge[],
   gremlin: Gremlin,
   taken: number,
+  gremlins: Gremlin[],
 }
 
 export interface IQueryPrototype {
@@ -94,22 +96,9 @@ export function prototype(bgraph: IBGraph): IQueryPrototype {
         pc--; // Move program back a step
         continue;
       }
-
-      if (maybe_gremlin != false && maybe_gremlin.state.isResult) {
-        // TODO: Prematurely adding a gremlin to the results causes unexpected behaviour
-        //       for the user such as the unique pipe no longer working. Consider cloning
-        //       and suspending Gremlins until unsuspended ie:
-        // `G.v().suspend('s1', {color: 'green'}).out().in().unsuspend('s1').unique().run()`
-        results.push(maybe_gremlin);
-        maybe_gremlin.state.isResult = false;
-        continue;
-      }
     }
 
     return results;
-    // return results.map(function(gremlin) { // Return results collected by gremlins or gremlin vertices
-    //   return gremlin.result != null
-    //        ? gremlin.result : gremlin.vertex; } ) as any[];
   };
 
 
