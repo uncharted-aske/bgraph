@@ -10168,6 +10168,40 @@ function prototype2(bgraph2) {
 }
 
 // src/transformers/transform.ts
+function checkValidRepeat(program) {
+  let numOfOpenRepeatBlocks = 0;
+  for (const step of program) {
+    if (step[0] === "start") {
+      numOfOpenRepeatBlocks++;
+    } else if (step[0] === "repeat") {
+      numOfOpenRepeatBlocks--;
+    }
+    if (numOfOpenRepeatBlocks < 0) {
+      throw new Error("Must begin a repeat block with a `start` step");
+    }
+  }
+  if (numOfOpenRepeatBlocks !== 0) {
+    throw new Error("Must close all start steps with a `repeat`");
+  }
+}
+function getRepeatRange(program) {
+  let startIdx = null;
+  let endIdx = null;
+  for (let i = 0; i < program.length; i++) {
+    const step = program[i];
+    if (startIdx == null && step[0] === "start") {
+      startIdx = i;
+    } else if (startIdx != null && step[0] === "repeat") {
+      endIdx = i;
+      break;
+    }
+  }
+  if (startIdx != null && endIdx != null) {
+    return [startIdx, endIdx];
+  } else {
+    return null;
+  }
+}
 function hydrate(bgraph2) {
   bgraph2.addTransformer = function(fun, priority) {
     if (typeof fun != "function") {
@@ -10186,6 +10220,20 @@ function hydrate(bgraph2) {
       return transformer.fun(acc);
     }, program);
   };
+  bgraph2.addTransformer(function(program) {
+    checkValidRepeat(program);
+    let range;
+    while (range = getRepeatRange(program)) {
+      const repeatStep = program[range[1]];
+      const numOfRepeats = repeatStep[1][0];
+      program.splice(range[0], 1);
+      program.splice(range[1] - 1, 1);
+      for (let j = 0; j < numOfRepeats; j++) {
+        program.splice(range[1] - 1, 0, ...program.slice(range[0], range[1] - 1));
+      }
+    }
+    return program;
+  }, 1e3);
 }
 
 // src/pipes/pipetypes.ts
@@ -10206,6 +10254,12 @@ function hydrate2(bgraph2) {
   bgraph2.fauxPipetype = function(graph2, args, maybe_gremlin) {
     return maybe_gremlin || "pull";
   };
+  bgraph2.addPipetype("repeat", function(graph2, args, maybe_gremlin) {
+    return maybe_gremlin || "pull";
+  });
+  bgraph2.addPipetype("start", function(graph2, args, maybe_gremlin) {
+    return maybe_gremlin || "pull";
+  });
   bgraph2.addPipetype("vertex", function(graph2, args, gremlin, state) {
     if (!state.vertices) {
       state.vertices = graph2.findVertices(args);
