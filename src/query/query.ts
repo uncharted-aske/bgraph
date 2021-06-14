@@ -9,9 +9,14 @@ export type Step = [
   ...never[], // Fixed length tuple
 ];
 
+export interface GremlinState {
+  as?: Map<string, IVertex>,
+  path?: Array<IVertex>,
+}
+
 export interface Gremlin {
   vertex: IVertex,
-  state: State,
+  state: GremlinState,
   result?: any,
 }
 
@@ -22,7 +27,6 @@ export interface State {
   edges: IEdge[],
   gremlin: Gremlin,
   taken: number,
-  as: Map<string, IVertex>,
 }
 
 export interface IQueryPrototype {
@@ -90,9 +94,10 @@ export function prototype(bgraph: IBGraph): IQueryPrototype {
       }
     }
 
-    return results.map(function(gremlin) { // Return results collected by gremlins or gremlin vertices
-      return gremlin.result != null
-           ? gremlin.result : gremlin.vertex; } ) as any[];
+    return results;
+    // return results.map(function(gremlin) { // Return results collected by gremlins or gremlin vertices
+    //   return gremlin.result != null
+    //        ? gremlin.result : gremlin.vertex; } ) as any[];
   };
 
 
