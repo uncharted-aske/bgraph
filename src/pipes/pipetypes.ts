@@ -198,32 +198,6 @@ export function hydrate(bgraph: IBGraph): void {
     return gremlin;
   });
 
-    // TODO: Update args type to indicate first argument should be an object or function
-    bgraph.addPipetype('target', function(graph: IGraph, args: any[], gremlin: Gremlin, state: State): PipeResult {
-      if(!gremlin) return 'pull'; // Initialize query
-
-      if(typeof args[0] == 'object') {
-        if (bgraph.objectFilter(gremlin.vertex, args[0])) {
-          // Mark gremlin as target
-          gremlin.state.isResult = true;
-        }
-        return gremlin;
-      }
-
-      if(typeof args[0] != 'function') {
-        bgraph.error('Filter arg must be function or object: ' + args[0]);
-        return gremlin;
-      }
-
-      if(args[0](gremlin.vertex, gremlin)) {
-        // Mark gremlin as target
-        gremlin.state.isResult = true;
-        return gremlin;
-      }
-      // Pass all Gremlin's forward
-      return gremlin;
-    });
-
   // TODO: Take could be used to return result batches so user can process asynchronously
   bgraph.addPipetype('take', function(graph: IGraph, args: any[], gremlin: Gremlin, state: State): PipeResult {
     state.taken = state.taken || 0; // Initialize state
