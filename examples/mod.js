@@ -10057,6 +10057,12 @@ function prototype(bgraph2) {
         }
         maybe_gremlin = false;
         pc--;
+        continue;
+      }
+      if (maybe_gremlin != false && maybe_gremlin.state.isResult) {
+        results.push(maybe_gremlin);
+        maybe_gremlin.state.isResult = false;
+        continue;
       }
     }
     return results;
@@ -10264,6 +10270,25 @@ function hydrate2(bgraph2) {
     }
     return gremlin;
   });
+  bgraph2.addPipetype("target", function(graph2, args, gremlin, state) {
+    if (!gremlin)
+      return "pull";
+    if (typeof args[0] == "object") {
+      if (bgraph2.objectFilter(gremlin.vertex, args[0])) {
+        gremlin.state.isResult = true;
+      }
+      return gremlin;
+    }
+    if (typeof args[0] != "function") {
+      bgraph2.error("Filter arg must be function or object: " + args[0]);
+      return gremlin;
+    }
+    if (args[0](gremlin.vertex, gremlin)) {
+      gremlin.state.isResult = true;
+      return gremlin;
+    }
+    return gremlin;
+  });
   bgraph2.addPipetype("take", function(graph2, args, gremlin, state) {
     state.taken = state.taken || 0;
     if (state.taken == args[0]) {
@@ -10339,7 +10364,7 @@ function hydrate4(bgraph2) {
     return newState;
   };
   bgraph2.makeGremlin = function(vertex, state) {
-    return {vertex, state};
+    return {vertex, state: state || {}};
   };
   bgraph2.gotoVertex = function(gremlin, vertex) {
     const state = bgraph2.cloneGremlinState(gremlin.state);
