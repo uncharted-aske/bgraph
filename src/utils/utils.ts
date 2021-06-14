@@ -26,7 +26,7 @@ export function hydrate(bgraph: IBGraph): void {
   };
 
   bgraph.makeGremlin = function(vertex: IVertex, state: GremlinState): Gremlin {
-    return {vertex, state };
+    return {vertex, state: state || {} };
   };
 
   bgraph.gotoVertex = function(gremlin: Gremlin, vertex: IVertex): Gremlin {

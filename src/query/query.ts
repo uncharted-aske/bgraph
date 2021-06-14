@@ -12,6 +12,7 @@ export type Step = [
 export interface GremlinState {
   as?: Map<string, IVertex>,
   path?: Array<IVertex>,
+  isResult?: boolean,
 }
 
 export interface Gremlin {
@@ -91,6 +92,17 @@ export function prototype(bgraph: IBGraph): IQueryPrototype {
         }
         maybe_gremlin = false;
         pc--; // Move program back a step
+        continue;
+      }
+
+      if (maybe_gremlin != false && maybe_gremlin.state.isResult) {
+        // TODO: Prematurely adding a gremlin to the results causes unexpected behaviour
+        //       for the user such as the unique pipe no longer working. Consider cloning
+        //       and suspending Gremlins until unsuspended ie:
+        // `G.v().suspend('s1', {color: 'green'}).out().in().unsuspend('s1').unique().run()`
+        results.push(maybe_gremlin);
+        maybe_gremlin.state.isResult = false;
+        continue;
       }
     }
 
