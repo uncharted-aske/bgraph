@@ -10059,11 +10059,6 @@ function prototype(bgraph2) {
         pc--;
         continue;
       }
-      if (maybe_gremlin != false && maybe_gremlin.state.isResult) {
-        results.push(maybe_gremlin);
-        maybe_gremlin.state.isResult = false;
-        continue;
-      }
     }
     return results;
   };
@@ -10260,6 +10255,36 @@ function hydrate2(bgraph2) {
   bgraph2.addPipetype("start", function(graph2, args, maybe_gremlin) {
     return maybe_gremlin || "pull";
   });
+  bgraph2.addPipetype("suspend", function(graph2, args, gremlin, state) {
+    let shouldSuspendGremlin = true;
+    if (!gremlin && (!state.gremlins || !state.gremlins.length)) {
+      return "pull";
+    }
+    if (!state.gremlins || !state.gremlins.length) {
+      if (typeof args[0] == "object" && !bgraph2.objectFilter(gremlin.vertex, args[0]) || typeof args[0] == "function" && !args[0](gremlin.vertex, gremlin)) {
+        shouldSuspendGremlin = false;
+      }
+      if (shouldSuspendGremlin) {
+        const suspendedGremlinState = bgraph2.cloneGremlinState(gremlin.state);
+        suspendedGremlinState.isSuspended = true;
+        const suspendedGremlin = bgraph2.makeGremlin(gremlin.vertex, suspendedGremlinState);
+        state.gremlins = [gremlin, suspendedGremlin];
+      } else {
+        state.gremlins = [gremlin];
+      }
+    }
+    if (!state.gremlins.length) {
+      return "pull";
+    }
+    return state.gremlins.pop();
+  });
+  bgraph2.addPipetype("unsuspend", function(graph2, args, gremlin, state) {
+    if (!gremlin)
+      return "pull";
+    if (gremlin && gremlin.state.isSuspended)
+      gremlin.state.isSuspended = false;
+    return gremlin;
+  });
   bgraph2.addPipetype("vertex", function(graph2, args, gremlin, state) {
     if (!state.vertices) {
       state.vertices = graph2.findVertices(args);
@@ -10277,6 +10302,8 @@ function hydrate2(bgraph2) {
       if (!gremlin && (!state.edges || !state.edges.length)) {
         return "pull";
       }
+      if (gremlin && gremlin.state.isSuspended)
+        return gremlin;
       if (!state.edges || !state.edges.length) {
         state.gremlin = gremlin;
         if (typeof args[0] === "function") {
@@ -10304,6 +10331,8 @@ function hydrate2(bgraph2) {
   bgraph2.addPipetype("unique", function(graph2, args, gremlin, state) {
     if (!gremlin)
       return "pull";
+    if (gremlin && gremlin.state.isSuspended)
+      return gremlin;
     if (state[gremlin.vertex._id])
       return "pull";
     state[gremlin.vertex._id] = true;
@@ -10312,6 +10341,8 @@ function hydrate2(bgraph2) {
   bgraph2.addPipetype("filter", function(graph2, args, gremlin, state) {
     if (!gremlin)
       return "pull";
+    if (gremlin && gremlin.state.isSuspended)
+      return gremlin;
     if (typeof args[0] == "object") {
       return bgraph2.objectFilter(gremlin.vertex, args[0]) ? gremlin : "pull";
     }
@@ -10321,25 +10352,6 @@ function hydrate2(bgraph2) {
     }
     if (!args[0](gremlin.vertex, gremlin)) {
       return "pull";
-    }
-    return gremlin;
-  });
-  bgraph2.addPipetype("target", function(graph2, args, gremlin, state) {
-    if (!gremlin)
-      return "pull";
-    if (typeof args[0] == "object") {
-      if (bgraph2.objectFilter(gremlin.vertex, args[0])) {
-        gremlin.state.isResult = true;
-      }
-      return gremlin;
-    }
-    if (typeof args[0] != "function") {
-      bgraph2.error("Filter arg must be function or object: " + args[0]);
-      return gremlin;
-    }
-    if (args[0](gremlin.vertex, gremlin)) {
-      gremlin.state.isResult = true;
-      return gremlin;
     }
     return gremlin;
   });
@@ -22212,8 +22224,17 @@ function addLayer(controller, queryResults, label, color, type, options) {
       options
     }
   };
+  const flattenedQueryResults = [];
   for (let i = 0; i < queryResults.length; i++) {
-    const result = queryResults[i];
+    const result = queryResults[i].result || queryResults[i].vertex;
+    flattenedQueryResults.push(result);
+    const path = queryResults[i].state?.path || [];
+    for (const vertex of path) {
+      flattenedQueryResults.push(vertex);
+    }
+  }
+  for (let i = 0; i < flattenedQueryResults.length; i++) {
+    const result = flattenedQueryResults[i];
     if (result._type === "node") {
       result.color = color;
       queryLayer.nodes.data.push(result);
