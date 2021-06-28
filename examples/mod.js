@@ -10256,6 +10256,8 @@ function hydrate2(bgraph2) {
     return maybe_gremlin || "pull";
   });
   bgraph2.addPipetype("suspend", function(graph2, args, gremlin, state) {
+    if (gremlin && gremlin.state.isSuspended)
+      return gremlin;
     let shouldSuspendGremlin = true;
     if (!gremlin && (!state.gremlins || !state.gremlins.length)) {
       return "pull";
