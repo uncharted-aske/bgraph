@@ -66,6 +66,7 @@ export function hydrate(bgraph: IBGraph): void {
   });
 
   bgraph.addPipetype('suspend', function(graph: IGraph, args: any[], gremlin: Gremlin, state: State): PipeResult {
+    if (gremlin && gremlin.state.isSuspended) return gremlin; // Gremlin is suspended do not traverse
     let shouldSuspendGremlin = true;
 
     if(!gremlin && (!state.gremlins || !state.gremlins.length)) {
