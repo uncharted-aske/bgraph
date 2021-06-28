@@ -11,7 +11,7 @@ import { IAlias } from "./alias/alias";
 import { ITransform } from "./transformers/transform";
 import { IUtils } from "./utils/utils";
 
-export interface IBGraph extends IPipe, IAlias, ITransform, IUtils {
+interface IBGraph extends IPipe, IAlias, ITransform, IUtils {
   G: IGraphProtoType,
   Q: IQueryPrototype,
   graph: (V?: IVertexProto[], E?: IEdgeProto[]) => IGraph,
@@ -66,3 +66,7 @@ alias.hydrate(_bgraph as IBGraph);
 utils.hydrate(_bgraph as IBGraph);
 
 export const bgraph = _bgraph as IBGraph;
+export {
+  IBGraph,
+  IGraph,
+};
