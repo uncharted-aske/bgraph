@@ -20,9 +20,9 @@ describe('traversal performance tests', () => {
   let t0: number;
   let t1: number;
   describe.each([
-    {n: 100,   expected: 3},
-    {n: 1000,  expected: 30},
-    {n: 10000, expected: 3000},
+    {n: 100,   expected: 5},
+    {n: 1000,  expected: 50},
+    {n: 10000, expected: 5000},
   ])('traversing $n times from single node cyclic graph', ({n, expected}) => {
     test(`should finish in ${expected}ms`, () => {
       G = bgraph.graph(...buildCyclicGraph(1));
@@ -36,9 +36,9 @@ describe('traversal performance tests', () => {
   });
 
   describe.each([
-    {n: 10000, expected: 30},
-    {n: 100000, expected: 300},
-    {n: 1000000, expected: 3000},
+    {n: 10000, expected: 50},
+    {n: 100000, expected: 500},
+    {n: 1000000, expected: 5000},
   ])('traversing a single time from an $n node cyclic graph', ({n, expected}) => {
     test(`should finish in ${expected}ms`, () => {
       G = bgraph.graph(...buildCyclicGraph(n));
