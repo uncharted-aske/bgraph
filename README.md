@@ -1,5 +1,5 @@
 # BGraph
-In-memory browser-compatible Graph Query Engine
+In-memory browser-compatible Graph Query Engine.
 
 ## Dagoba Fork
 
