@@ -1,6 +1,6 @@
 const config = {
   transform: {
-    '^.+\\.tsx?$': 'esbuild-jest',
+    '^.+\\.ts?$': 'esbuild-jest',
   },
 };
 export default config;
