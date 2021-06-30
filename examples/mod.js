@@ -9813,7 +9813,7 @@ function prototype(bgraph2) {
       state = this.state[pc] = this.state[pc] || {};
       pipetype = bgraph2.getPipetype(step[0]);
       maybe_gremlin = pipetype(this.graph, step[1], maybe_gremlin, state);
-      if (maybe_gremlin == "pull") {
+      if (maybe_gremlin === "pull") {
         maybe_gremlin = false;
         if (pc - 1 > done) {
           pc--;
@@ -9822,7 +9822,7 @@ function prototype(bgraph2) {
           done = pc;
         }
       }
-      if (maybe_gremlin == "done") {
+      if (maybe_gremlin === "done") {
         maybe_gremlin = false;
         done = pc;
       }
@@ -10203,7 +10203,7 @@ function hydrate4(bgraph2) {
       newState.as = state.as;
     }
     if (state?.path) {
-      newState.path = state.path.slice();
+      newState.path = state.path;
     }
     return newState;
   };
@@ -10213,9 +10213,15 @@ function hydrate4(bgraph2) {
   bgraph2.gotoVertex = function(gremlin, vertex) {
     const state = bgraph2.cloneGremlinState(gremlin.state);
     if (state.path) {
-      state.path.push(gremlin.vertex);
+      const newPath = {
+        vertex: gremlin.vertex,
+        parent: state.path
+      };
+      state.path = newPath;
     } else {
-      state.path = [gremlin.vertex];
+      state.path = {
+        vertex: gremlin.vertex
+      };
     }
     return bgraph2.makeGremlin(vertex, state);
   };
