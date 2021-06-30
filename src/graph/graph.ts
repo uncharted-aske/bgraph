@@ -12,6 +12,11 @@ export interface IVertex extends IVertexProto {
   _in: IEdge[],
 }
 
+export interface IVertexPath {
+  parent?: IVertexPath,
+  vertex: IVertex,
+}
+
 export interface IEdgeProto {
   _out: VertexIndex,
   _in: VertexIndex,

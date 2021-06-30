@@ -1,4 +1,4 @@
-import { IGraph, IVertex, IEdge } from "../graph/graph";
+import { IGraph, IVertex, IVertexPath, IEdge } from "../graph/graph";
 import { IBGraph } from "..";
 import { PipeTypes, PipeResult, PipeFunction } from "../pipes/pipetypes";
 
@@ -11,7 +11,7 @@ export type Step = [
 
 export interface GremlinState {
   as?: Map<string, IVertex>,
-  path?: Array<IVertex>,
+  path?: IVertexPath,
   isResult?: boolean,
   isSuspended?: boolean,
 }
@@ -69,7 +69,7 @@ export function prototype(bgraph: IBGraph): IQueryPrototype {
 
       maybe_gremlin = pipetype(this.graph, step[1], maybe_gremlin, state);
 
-      if(maybe_gremlin == 'pull') { // 'pull' tells us the pipe wants further input
+      if(maybe_gremlin === 'pull') { // 'pull' tells us the pipe wants further input
         maybe_gremlin = false;
         if(pc-1 > done) {
           pc--; // Move program counter to previous pipe
@@ -79,7 +79,7 @@ export function prototype(bgraph: IBGraph): IQueryPrototype {
         }
       }
 
-      if(maybe_gremlin == 'done') {
+      if(maybe_gremlin === 'done') {
         // Pipe is finished
         maybe_gremlin = false;
         done = pc;

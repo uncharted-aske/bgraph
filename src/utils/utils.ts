@@ -20,7 +20,7 @@ export function hydrate(bgraph: IBGraph): void {
       newState.as = state.as;
     }
     if (state?.path) {
-      newState.path = state.path.slice(); // shallow copy path
+      newState.path = state.path; // Point new state to head of path
     }
     return newState as GremlinState;
   };
@@ -33,9 +33,15 @@ export function hydrate(bgraph: IBGraph): void {
     const state = bgraph.cloneGremlinState(gremlin.state);
     if (state.path) {
       // Add current vertex to Gremlin's path
-      state.path.push(gremlin.vertex);
+      const newPath = {
+        vertex: gremlin.vertex,
+        parent: state.path,
+      };
+      state.path = newPath;
     } else {
-      state.path = [gremlin.vertex];
+      state.path = {
+        vertex: gremlin.vertex,
+      };
     }
     return bgraph.makeGremlin(vertex, state); // Clone gremlin
   };
