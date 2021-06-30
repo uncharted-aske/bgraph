@@ -11,7 +11,8 @@ export type Step = [
 
 export interface GremlinState {
   as?: Map<string, IVertex>,
-  path?: IVertexPath,
+  path?: Array<IVertex>,
+  pathRef?: IVertexPath,
   isResult?: boolean,
   isSuspended?: boolean,
 }

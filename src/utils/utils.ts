@@ -16,11 +16,30 @@ export interface IUtils {
 export function hydrate(bgraph: IBGraph): void {
   bgraph.cloneGremlinState = function(state: GremlinState) {
     const newState: Partial<GremlinState> = {};
+    Object.defineProperty(newState, 'path', {
+      get: function (): Array<IVertex> {
+        if (!this.pathRef) {
+          return [];
+        }
+
+        const path = [];
+        let currentPath = this.pathRef;
+        while (true) {
+          path.unshift(currentPath.vertex);
+          if(currentPath.parent) {
+            currentPath = currentPath.parent;
+          } else {
+            return path;
+          }
+        }
+      },
+    });
+
     if (state?.as) {
       newState.as = state.as;
     }
-    if (state?.path) {
-      newState.path = state.path; // Point new state to head of path
+    if (state?.pathRef) {
+      newState.pathRef = state.pathRef; // Point new state to head of path
     }
     return newState as GremlinState;
   };
@@ -31,15 +50,15 @@ export function hydrate(bgraph: IBGraph): void {
 
   bgraph.gotoVertex = function(gremlin: Gremlin, vertex: IVertex): Gremlin {
     const state = bgraph.cloneGremlinState(gremlin.state);
-    if (state.path) {
+    if (state.pathRef) {
       // Add current vertex to Gremlin's path
       const newPath = {
         vertex: gremlin.vertex,
-        parent: state.path,
+        parent: state.pathRef,
       };
-      state.path = newPath;
+      state.pathRef = newPath;
     } else {
-      state.path = {
+      state.pathRef = {
         vertex: gremlin.vertex,
       };
     }
