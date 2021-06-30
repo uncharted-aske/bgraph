@@ -23,7 +23,7 @@ describe('traversal performance tests', () => {
     {n: 100,   expected: 5},
     {n: 1000,  expected: 50},
     {n: 10000, expected: 500},
-    {n: 100000, expected: 5000},
+    {n: 100000, expected: 20000},
   ])('traversing $n times from single node cyclic graph', ({n, expected}) => {
     test(`should finish in ${expected}ms`, () => {
       G = bgraph.graph(...buildCyclicGraph(1));
