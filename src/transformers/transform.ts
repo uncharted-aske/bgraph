@@ -81,21 +81,21 @@ export function hydrate(bgraph: IBGraph): void {
   // Register initial transformers
 
   // Register start/repeat transformer
-  bgraph.addTransformer(function(program: Step[]) {
-    checkValidRepeat(program);
+  // bgraph.addTransformer(function(program: Step[]) {
+  //   checkValidRepeat(program);
 
-    let range;
-    while(range = getRepeatRange(program)) {
-      const repeatStep = program[range[1]];
-      const numOfRepeats = repeatStep[1][0];
+  //   let range;
+  //   while(range = getRepeatRange(program)) {
+  //     const repeatStep = program[range[1]];
+  //     const numOfRepeats = repeatStep[1][0];
 
-      program.splice(range[0], 1);
-      program.splice(range[1]-1, 1);
+  //     program.splice(range[0], 1);
+  //     program.splice(range[1]-1, 1);
 
-      for (let j = 0; j < numOfRepeats; j++) {
-        program.splice(range[1]-1, 0, ...program.slice(range[0],range[1]-1));
-      }
-    }
-    return program;
-  }, 1000);
+  //     for (let j = 0; j < numOfRepeats; j++) {
+  //       program.splice(range[1]-1, 0, ...program.slice(range[0],range[1]-1));
+  //     }
+  //   }
+  //   return program;
+  // }, 1000);
 }

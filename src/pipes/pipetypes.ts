@@ -55,9 +55,20 @@ export function hydrate(bgraph: IBGraph): void {
 
   // Built-in Pipetypes TODO: Move to own directory
 
-  bgraph.addPipetype('repeat', function(graph: IGraph, args: any[], maybe_gremlin: MaybeGremlin): MaybeGremlin {
-    // Faux pipetype used to pass type error checking. Removed in transformer step
-    return maybe_gremlin || 'pull';
+  bgraph.addPipetype('repeat', function(graph: IGraph, args: any[], gremlin: Gremlin, state: State): MaybeGremlin {
+    if(!gremlin) return 'pull';
+
+    if (gremlin.state.taken === undefined) {
+      gremlin.state.taken = args[0];
+    }
+
+    gremlin.state.taken--;
+
+    if (gremlin.state.taken > 0) {
+      gremlin.state.goto = args[1];
+    }
+
+    return gremlin;
   });
 
   bgraph.addPipetype('start', function(graph: IGraph, args: any[], maybe_gremlin: MaybeGremlin): MaybeGremlin {

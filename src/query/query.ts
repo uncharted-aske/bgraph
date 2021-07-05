@@ -14,6 +14,8 @@ export interface GremlinState {
   path?: IVertexPath,
   isResult?: boolean,
   isSuspended?: boolean,
+  taken?: number,
+  goto?: number,
 }
 
 export interface Gremlin {
@@ -85,7 +87,13 @@ export function prototype(bgraph: IBGraph): IQueryPrototype {
         done = pc;
       }
 
-      pc++; // Move program counter to next pipe
+      if (typeof maybe_gremlin === 'object' && maybe_gremlin.state.goto) {
+        pc = maybe_gremlin.state.goto;
+        maybe_gremlin.state.goto = undefined;
+        continue;
+      } else {
+        pc++; // Move program counter to next pipe
+      }
 
       if(pc > max) {
         if(maybe_gremlin) {
