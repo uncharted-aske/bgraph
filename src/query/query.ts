@@ -16,6 +16,7 @@ export interface GremlinState {
   isSuspended?: boolean,
   taken?: number,
   goto?: number,
+  gotoStack?: number[],
 }
 
 export interface Gremlin {
@@ -68,8 +69,7 @@ export function prototype(bgraph: IBGraph): IQueryPrototype {
       step = this.program[pc];
       state = (this.state[pc] = this.state[pc] || {} as State);
       pipetype = bgraph.getPipetype(step[0]);
-
-      maybe_gremlin = pipetype(this.graph, step[1], maybe_gremlin, state);
+      maybe_gremlin = pipetype(this.graph, step[1], maybe_gremlin, state, pc);
 
       if(maybe_gremlin === 'pull') { // 'pull' tells us the pipe wants further input
         maybe_gremlin = false;

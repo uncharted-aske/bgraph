@@ -22,6 +22,12 @@ export function hydrate(bgraph: IBGraph): void {
     if (state?.path) {
       newState.path = state.path; // Point new state to head of path
     }
+    if (state?.taken) {
+      newState.taken = state.taken;
+    }
+    if (state?.gotoStack) {
+      newState.gotoStack = state.gotoStack;
+    }
     return newState as GremlinState;
   };
 

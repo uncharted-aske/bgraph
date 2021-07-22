@@ -94,6 +94,7 @@ export async function grid(container: HTMLElement): Promise<void> {
   ];
   const [bNodes, bEdges] = transformToBGraph(nodes, edges);
   const G = bgraph.graph(bNodes, bEdges);
+  window.G = G;
 
   renderLayout(container);
   const graphContainer = document.getElementById('graph-container');

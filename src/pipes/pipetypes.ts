@@ -9,6 +9,7 @@ export type PipeFunction = (
   args: any[],
   gremlin: MaybeGremlin,
   state?: State,
+  pc?: number,
   [string]?: any,
 ) => PipeResult;
 
@@ -55,7 +56,7 @@ export function hydrate(bgraph: IBGraph): void {
 
   // Built-in Pipetypes TODO: Move to own directory
 
-  bgraph.addPipetype('repeat', function(graph: IGraph, args: any[], gremlin: Gremlin, state: State): MaybeGremlin {
+  bgraph.addPipetype('repeat', function(graph: IGraph, args: any[], gremlin: Gremlin): MaybeGremlin {
     if(!gremlin) return 'pull';
 
     if (gremlin.state.taken === undefined) {
@@ -65,15 +66,22 @@ export function hydrate(bgraph: IBGraph): void {
     gremlin.state.taken--;
 
     if (gremlin.state.taken > 0) {
-      gremlin.state.goto = args[1];
+      gremlin.state.goto = gremlin.state.gotoStack[gremlin.state.gotoStack.length - 1];
+    } else {
+      gremlin.state.gotoStack.pop();
     }
 
     return gremlin;
   });
 
-  bgraph.addPipetype('start', function(graph: IGraph, args: any[], maybe_gremlin: MaybeGremlin): MaybeGremlin {
-    // Faux pipetype used to pass type error checking. Removed in transformer step
-    return maybe_gremlin || 'pull';
+  bgraph.addPipetype('start', function(graph: IGraph, args: any[], maybe_gremlin: MaybeGremlin, state: State, pc: number): MaybeGremlin {
+    if(maybe_gremlin) {
+      const gremlin = maybe_gremlin as Gremlin;
+      (gremlin.state.gotoStack = gremlin.state.gotoStack ?? []).push(pc + 1);
+      return gremlin;
+    } else {
+      return 'pull';
+    }
   });
 
   bgraph.addPipetype('suspend', function(graph: IGraph, args: any[], gremlin: Gremlin, state: State): PipeResult {
