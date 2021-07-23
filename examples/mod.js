@@ -9999,9 +9999,12 @@ function hydrate(bgraph2) {
       const numOfRepeats = repeatStep[1][0];
       program.splice(range[0], 1);
       program.splice(range[1] - 1, 1);
-      for (let j = 0; j < numOfRepeats; j++) {
-        program.splice(range[1] - 1, 0, ...program.slice(range[0], range[1] - 1));
+      const subProgram = program.slice(range[0], range[1] - 1);
+      const repeatedSubProgram = new Array(subProgram.length * numOfRepeats);
+      for (let j = 0; j < repeatedSubProgram.length; j++) {
+        repeatedSubProgram[j] = subProgram[j % subProgram.length];
       }
+      program = program.slice(0, range[1] - 1).concat(repeatedSubProgram).concat(program.slice(range[1] - 1));
     }
     return program;
   }, 1e3);
