@@ -1,4 +1,5 @@
-import { bgraph, IGraph } from "./index";
+import { bgraph } from "./index";
+import { IGraph } from "./graph/graph";
 
 const EDGES_SINGLE_NODE_CYCLE = [
   { _id: 'e-1', _label: 'AA', _in: 'n-1', _out: 'n-1', type: 'Sibling' },
