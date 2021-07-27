@@ -1,5 +1,6 @@
 import { performance } from 'perf_hooks';
-import { bgraph, IGraph } from "./index";
+import { bgraph } from "./index";
+import { IGraph } from "./graph/graph";
 
 function buildCyclicGraph(n: number) {
   const nodes = new Array(n).fill(undefined).map((_, i) => {
