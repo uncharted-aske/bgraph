@@ -1,6 +1,6 @@
 {
   "name": "@uncharted.software/bgraph",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "bgraph is an in-memory browser-compatible graph database",
   "author": "Uncharted Software",
   "license": "Apache-2.0",
